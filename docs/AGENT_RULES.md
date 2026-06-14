@@ -29,13 +29,17 @@ Read in the following order:
 3. docs/PROJECT_STATUS.md
 4. docs/HANDOFF.md
 5. docs/DECISIONS.md
+6. [DESIGN_SYSTEM.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/DESIGN_SYSTEM.md)
+7. [PRE_PHASE_3_AUDIT.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PRE_PHASE_3_AUDIT.md)
+8. [PHASE_3_ARCHITECTURE.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PHASE_3_ARCHITECTURE.md)
+9. [PROJECTS_APP_ARCHITECTURE.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PROJECTS_APP_ARCHITECTURE.md)
 
 If additional context is needed:
 
-6. docs/ARCHITECTURE_OVERVIEW.md
-7. docs/ARCHITECTURE_REVIEW.md
-8. docs/DEVELOPMENT_ROADMAP.md
-9. docs/MY_OS_PORTFOLIO_SPEC.md
+10. docs/ARCHITECTURE_OVERVIEW.md
+11. docs/ARCHITECTURE_REVIEW.md
+12. docs/DEVELOPMENT_ROADMAP.md
+13. docs/MY_OS_PORTFOLIO_SPEC.md
 
 ---
 
@@ -75,17 +79,119 @@ Do not begin implementation until project state is understood.
 
 ---
 
+# Design & Architecture Governance Rules
+
+## Rule D-1: Screenshots Are the Visual Source of Truth
+
+The screenshots in `docs/design/` are the **highest authority** for all visual decisions.
+
+- `docs/design/boot-screen.png` — Boot screen
+- `docs/design/lock-screen.png` — Lock screen
+- `docs/design/desktop-home.png` — Desktop with app windows
+- `docs/design/file-app.png` — Files application
+- `docs/design/setting-app.png` — Settings application
+
+If any code conflicts with these screenshots, the screenshot wins. The conflict must be documented. The code must be corrected.
+
+---
+
+## Rule D-2: DESIGN_SYSTEM.md Overrides AI Assumptions
+
+`docs/DESIGN_SYSTEM.md` is the canonical design specification extracted from the approved screenshots.
+
+- AI model training data, design instincts, and prior conventions are **overridden** by `docs/DESIGN_SYSTEM.md`.
+- Do not invent new visual patterns. Use only the patterns documented in `docs/DESIGN_SYSTEM.md`.
+- If a visual pattern is needed but not documented, document it in `docs/DESIGN_SYSTEM.md` first, then implement it.
+
+---
+
+## Rule D-3: Mandatory Design & Architecture Review Before Any UI Work
+
+Before implementing any UI component, feature, or application:
+
+1. Read `docs/DESIGN_SYSTEM.md` and `docs/PHASE_3_ARCHITECTURE.md` completely.
+2. Identify which layout pattern applies (Layout A: Profile/Dashboard or Layout B: Master-Detail with Sidebar).
+3. Identify which color tokens apply.
+4. Identify which typography scale applies.
+5. Confirm the component patterns (button, card, list, input) that apply.
+6. Verify sizing matches the `defaultSize` specifications in `docs/PHASE_3_ARCHITECTURE.md` and app routing follows the direct mounting model.
+
+Skipping this step is a rule violation.
+
+---
+
+## Rule D-4: Future Agents May Extend the Design System But May Not Replace It
+
+New design patterns may be added to `docs/DESIGN_SYSTEM.md` when a genuinely new UI pattern is needed.
+
+Agents may NOT:
+
+- Replace the color system with a new palette.
+- Replace the glassmorphism style with a different visual treatment.
+- Replace the OS window metaphor with a website layout.
+- Introduce typography outside the documented type scale without updating `docs/DESIGN_SYSTEM.md`.
+
+Additions must be **compatible with and consistent with** the existing approved design.
+
+---
+
+## Rule D-5: Do Not Redesign Approved Screens
+
+The following screens are **approved and locked**:
+
+- Boot screen
+- Lock screen
+- Desktop home
+- Files app layout
+- Settings app layout
+- About app layout
+
+These screens must not be redesigned. Implementation must match the approved screenshots. Minor implementation-level polish is acceptable. Structural redesign is not.
+
+---
+
+## Rule D-6: Do Not Introduce Conflicting Visual Patterns
+
+Prohibited patterns that conflict with the approved OS design:
+
+- ❌ Website-style hero sections with full-page background images
+- ❌ Scrolling landing pages with stacked sections
+- ❌ Top navigation bars (navbars) inside app windows
+- ❌ Footer sections inside app windows
+- ❌ Bright/light backgrounds inside app content areas
+- ❌ Gradient-filled cards (not in approved designs)
+- ❌ Font sizes larger than 32px inside app content areas
+- ❌ Ad-hoc colors not in `docs/DESIGN_SYSTEM.md` tokens
+- ❌ Ad-hoc font sizes not in the typography scale
+- ❌ External link behavior that exits the OS without using the Browser app
+
+---
+
+## Rule D-7: Do Not Create Website-Style Layouts Inside Applications
+
+Every application must:
+
+1. Look like an installed OS application.
+2. Never look like a website.
+3. Use `WindowChrome` as its outer frame — never render its own title bar.
+4. Use sidebar + tab navigation (Layout B) or flat card layout (Layout A).
+5. Never use browser-style URL bars or breadcrumbs unless the app is a file browser or internal browser.
+
+---
+
 # Development Workflow
 
 For every task:
 
 1. Understand the requirement.
-2. Review related documentation.
-3. Review existing implementation.
-4. Plan changes using `docs/TASK_BOARD.md` as the authoritative queue.
-5. Implement changes.
-6. Validate architecture consistency.
-7. Update documentation if required.
+2. Read `docs/DESIGN_SYSTEM.md` and `docs/PHASE_3_ARCHITECTURE.md` if the task involves UI or app implementation.
+3. Review related documentation.
+4. Review existing implementation.
+5. Plan changes using `docs/TASK_BOARD.md` as the authoritative queue.
+6. Implement changes.
+7. Validate architecture consistency.
+8. Validate visual consistency against `docs/design/` screenshots.
+9. Update documentation if required.
 
 Keep changes small, focused, and aligned with existing architecture.
 
@@ -165,16 +271,6 @@ These systems may be modified when necessary, but changes must be deliberate and
 # Multi-Agent Compatibility Rule
 
 This repository is designed to support multiple AI agents.
-
-Examples:
-
-- GitHub Copilot
-- OpenAI Codex
-- Claude Code
-- Gemini CLI
-- Cursor
-- OpenHands
-- Future AI agents
 
 All agents must be able to continue work using repository documentation alone.
 

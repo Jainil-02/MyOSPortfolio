@@ -12,6 +12,7 @@ export type WindowState = {
   focused: boolean;
   minimized: boolean;
   maximized: boolean;
+  initialProps?: Record<string, unknown>;
 };
 
 const initialWindows: WindowState[] = [];
@@ -46,7 +47,22 @@ export function focusWindow(id: string) {
   windows = windows.map((window) => ({
     ...window,
     focused: window.id === id,
+    minimized: window.id === id ? false : window.minimized,
   }));
+  broadcastWindowState();
+}
+
+export function minimizeWindow(id: string) {
+  windows = windows.map((window) =>
+    window.id === id ? { ...window, minimized: true, focused: false } : window,
+  );
+  broadcastWindowState();
+}
+
+export function maximizeWindow(id: string) {
+  windows = windows.map((window) =>
+    window.id === id ? { ...window, maximized: !window.maximized } : window,
+  );
   broadcastWindowState();
 }
 

@@ -10,8 +10,8 @@ export default function ProjectsPage() {
         <header className="rounded-3xl bg-white p-10 shadow-lg shadow-slate-200/30">
           <h1 className="text-4xl font-semibold">Projects</h1>
           <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-600">
-            Explore validated portfolio work built with a schema-driven content model. Each project card
-            includes timeline, tech stack, status, and media details.
+            Explore validated portfolio work built with a schema-driven content model. Each project
+            card includes timeline, tech stack, status, and media details.
           </p>
         </header>
 
@@ -131,7 +131,9 @@ export default function ProjectsPage() {
                     </h3>
                     <ul className="mt-4 space-y-2 text-slate-700">
                       {project.challenges.length > 0 ? (
-                        project.challenges.map((challenge) => <li key={challenge}>• {challenge}</li>)
+                        project.challenges.map((challenge) => (
+                          <li key={challenge}>• {challenge}</li>
+                        ))
                       ) : (
                         <li>Not yet specified.</li>
                       )}

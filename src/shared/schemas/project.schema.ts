@@ -19,11 +19,31 @@ export const projectReelSchema = z
     image: assetPathSchema.optional(),
     cta: nonEmptyTextSchema.optional(),
     order: z.number().int().nonnegative(),
+    type: z.enum(["image", "video", "split", "text-only"]).optional(),
   })
   .refine((reel) => reel.video !== undefined || reel.image !== undefined, {
     message: "A project reel requires a video or image.",
     path: ["image"],
   });
+
+export const projectNamedReelSchema = z.object({
+  id: identifierSchema,
+  projectId: identifierSchema,
+  title: nonEmptyTextSchema,
+  description: nonEmptyTextSchema.optional(),
+  coverImage: assetPathSchema.optional(),
+  order: z.number().int().nonnegative(),
+  slides: z.array(projectReelSchema).min(1),
+});
+
+export const storyChapterSchema = z.object({
+  id: identifierSchema,
+  title: nonEmptyTextSchema,
+  body: nonEmptyTextSchema,
+  order: z.number().int().nonnegative(),
+  media: z.array(assetPathSchema).default([]),
+  reelId: identifierSchema.optional(),
+});
 
 export const projectSchema = z
   .object({
@@ -53,6 +73,10 @@ export const projectSchema = z
     reelSlides: z.array(projectReelSchema).min(1),
     createdAt: isoDateTimeSchema,
     updatedAt: isoDateTimeSchema,
+    reels: z.array(projectNamedReelSchema).optional(),
+    storyChapters: z.array(storyChapterSchema).optional(),
+    platform: z.enum(["web", "mobile", "desktop", "cli", "library", "other"]).optional(),
+    displayOrder: z.number().int().nonnegative().optional(),
   })
   .superRefine((project, context) => {
     const reelIds = new Set<string>();
@@ -85,6 +109,69 @@ export const projectSchema = z
 
       reelIds.add(reel.id);
       reelOrders.add(reel.order);
+    }
+
+    // Validate reels (v2)
+    const namedReelIds = new Set<string>();
+    if (project.reels) {
+      const namedReelOrders = new Set<number>();
+      for (const reel of project.reels) {
+        if (reel.projectId !== project.id) {
+          context.addIssue({
+            code: "custom",
+            message: `Named reel "${reel.id}" must reference project "${project.id}".`,
+            path: ["reels"],
+          });
+        }
+        if (namedReelIds.has(reel.id)) {
+          context.addIssue({
+            code: "custom",
+            message: `Duplicate named reel id "${reel.id}".`,
+            path: ["reels"],
+          });
+        }
+        if (namedReelOrders.has(reel.order)) {
+          context.addIssue({
+            code: "custom",
+            message: `Duplicate named reel order "${reel.order}".`,
+            path: ["reels"],
+          });
+        }
+        namedReelIds.add(reel.id);
+        namedReelOrders.add(reel.order);
+      }
+    }
+
+    // Validate storyChapters (v2)
+    if (project.storyChapters) {
+      const chapterIds = new Set<string>();
+      const chapterOrders = new Set<number>();
+      for (const chapter of project.storyChapters) {
+        if (chapterIds.has(chapter.id)) {
+          context.addIssue({
+            code: "custom",
+            message: `Duplicate chapter id "${chapter.id}".`,
+            path: ["storyChapters"],
+          });
+        }
+        if (chapterOrders.has(chapter.order)) {
+          context.addIssue({
+            code: "custom",
+            message: `Duplicate chapter order "${chapter.order}".`,
+            path: ["storyChapters"],
+          });
+        }
+        chapterIds.add(chapter.id);
+        chapterOrders.add(chapter.order);
+
+        if (chapter.reelId && project.reels && !namedReelIds.has(chapter.reelId)) {
+          context.addIssue({
+            code: "custom",
+            message: `Chapter "${chapter.id}" references non-existent reel "${chapter.reelId}".`,
+            path: ["storyChapters"],
+          });
+        }
+      }
     }
   });
 

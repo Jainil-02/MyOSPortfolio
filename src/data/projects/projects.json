@@ -1,38 +1,158 @@
 [
   {
-    "id": "sample-project",
-    "slug": "sample-project",
-    "title": "Sample Project",
-    "shortDescription": "A sample project for validation and testing.",
-    "fullDescription": "This is a sample project used to validate the project schema and provide sample data for UI development.",
-    "category": "Demo",
-    "techStack": ["React", "TypeScript"],
-    "githubUrl": "https://github.com/example/sample-project",
-    "liveUrl": "https://example.com",
-    "thumbnail": "/media/projects/sample-thumb.jpg",
-    "coverImage": "/media/projects/sample-cover.jpg",
+    "id": "apex-os",
+    "slug": "apex-os",
+    "title": "ApexOS Portfolio",
+    "shortDescription": "A premium desktop operating system portfolio interface built with Next.js.",
+    "fullDescription": "ApexOS simulates a complete web-based operating system. It features draggable window panels, custom settings, dynamic wallpapers, wallpaper changes, a notifications system, custom registry loader, and flagship applications for presenting portfolios in an immersive interactive style.",
+    "category": "Web App",
+    "techStack": ["Next.js", "React", "TypeScript", "Tailwind CSS", "Zod"],
+    "githubUrl": "https://github.com/jainil-02/MyOSPortfolio",
+    "liveUrl": "https://apexos.dev",
+    "thumbnail": "/media/projects/apex-os/thumbnail.jpg",
+    "coverImage": "/media/projects/apex-os/cover.jpg",
     "screenshots": [],
-    "featured": false,
-    "status": "planned",
-    "timeline": "Q2 2026",
-    "role": "Sole engineer",
+    "featured": true,
+    "status": "completed",
+    "timeline": "Jan 2026 - Present",
+    "role": "Lead Architect",
     "teamSize": 1,
-    "features": ["Feature one", "Feature two"],
-    "challenges": ["Challenge one"],
-    "solutions": ["Solution one"],
-    "results": ["Result one"],
-    "tags": ["sample", "demo"],
+    "features": [
+      "Draggable window management with focus layering",
+      "Dynamic background wallpaper system from settings",
+      "Custom notifications popover with tray integration",
+      "Adaptive device shells (Desktop, Tablet, Mobile)"
+    ],
+    "challenges": [
+      "Enforcing window focus layering and smooth CSS animations concurrently",
+      "Supporting Server-Side Rendering (SSR) without hydration mismatch in system settings"
+    ],
+    "solutions": [
+      "Used window focus stack indexing with react state lifecycle hookup",
+      "Implemented client-only dynamic loading wrapper and localStorage safe helpers"
+    ],
+    "results": [
+      "Boot-to-Desktop flow runs in under 3 seconds",
+      "Recruiters report high engagement with immersive master-detail interactive reels"
+    ],
+    "tags": ["portfolio", "nextjs", "os", "creative-ui"],
     "reelSlides": [
       {
-        "id": "sample-project-reel-1",
-        "projectId": "sample-project",
-        "title": "Sample Reel 1",
-        "description": "An intro reel for the sample project.",
-        "image": "/media/projects/sample.jpg",
+        "id": "apex-os-slide-1",
+        "projectId": "apex-os",
+        "title": "Introduction to ApexOS",
+        "description": "Simulating a complete operating system interface inside the web browser.",
+        "image": "/media/projects/apex-os/reel/slide-1.jpg",
+        "order": 0
+      },
+      {
+        "id": "apex-os-slide-2",
+        "projectId": "apex-os",
+        "title": "Interactive Windows",
+        "description": "Draggable, stackable, and focus-aware window panels render registered applications.",
+        "image": "/media/projects/apex-os/reel/slide-2.jpg",
+        "order": 1
+      }
+    ],
+    "displayOrder": 1,
+    "platform": "web",
+    "createdAt": "2026-06-14T12:00:00+00:00",
+    "updatedAt": "2026-06-14T12:00:00+00:00"
+  },
+  {
+    "id": "fit-track",
+    "slug": "fit-track",
+    "title": "FitTrack Pro",
+    "shortDescription": "A mobile fitness companion app supporting workout analytics and social sharing.",
+    "fullDescription": "FitTrack Pro is a cross-platform mobile app designed to help athletes track their workouts, monitor real-time heart rate via Bluetooth integrations, and share progress logs with their fitness circles. Includes rich charts and native storage backups.",
+    "category": "Mobile App",
+    "techStack": ["React Native", "Expo", "TypeScript", "SQLite", "Reanimated"],
+    "githubUrl": "https://github.com/example/fit-track",
+    "thumbnail": "/media/projects/fit-track/thumbnail.jpg",
+    "coverImage": "/media/projects/fit-track/cover.jpg",
+    "screenshots": [],
+    "featured": false,
+    "status": "in-progress",
+    "timeline": "Mar 2026 - Present",
+    "role": "Mobile Developer",
+    "teamSize": 2,
+    "features": [
+      "Offline-first local workout logging with SQLite",
+      "Real-time sensor graphs using react-native-reanimated",
+      "Social leaderboard feeds with instant sync"
+    ],
+    "challenges": [
+      "Frequent SQLite database locking during high-frequency workout GPS logging",
+      "Maintaining smooth 60fps graph renders on older mobile devices"
+    ],
+    "solutions": [
+      "Implemented a batched write transaction queue in local database",
+      "Used native UI thread execution for visual updates with Reanimated"
+    ],
+    "results": [
+      "Logged workouts match exactly across offline sessions",
+      "Maintained 60fps rendering during sensor graphing"
+    ],
+    "tags": ["fitness", "mobile", "sqlite", "sensors"],
+    "reelSlides": [
+      {
+        "id": "fit-track-slide-1",
+        "projectId": "fit-track",
+        "title": "Workout Dashboard",
+        "description": "Log weights, reps, and cardiovascular sets with a smart adaptive UI.",
+        "image": "/media/projects/fit-track/reel/slide-1.jpg",
         "order": 0
       }
     ],
+    "displayOrder": 2,
+    "platform": "mobile",
     "createdAt": "2026-06-13T12:00:00+00:00",
     "updatedAt": "2026-06-13T12:00:00+00:00"
+  },
+  {
+    "id": "zod-validator",
+    "slug": "zod-validator",
+    "title": "Lightweight Zod Validator",
+    "shortDescription": "A blazing fast micro-library for custom Zod validation middleware.",
+    "fullDescription": "A lightweight Zod validation engine that speeds up API request schemas processing by caching parsing paths. Written in pure TypeScript with zero external dependencies besides Zod itself.",
+    "category": "Library",
+    "techStack": ["TypeScript", "Zod", "Vitest"],
+    "githubUrl": "https://github.com/example/zod-validator",
+    "thumbnail": "/media/projects/zod-validator/thumbnail.jpg",
+    "coverImage": "/media/projects/zod-validator/cover.jpg",
+    "screenshots": [],
+    "featured": false,
+    "status": "completed",
+    "timeline": "Feb 2026 - Feb 2026",
+    "role": "Sole Developer",
+    "teamSize": 1,
+    "features": [
+      "Fast path parsing caches for Zod Object schemas",
+      "Drop-in Express and Hono framework middleware loaders",
+      "Friendly nested validation error structures output"
+    ],
+    "challenges": [
+      "Determining cache key signatures for complex Zod Union/Intersection validation trees"
+    ],
+    "solutions": ["Developed a custom deterministic stringifier for schema metadata structures"],
+    "results": [
+      "Improved middleware execution time by 45% on average",
+      "Zero dependency bloat added to microservices using this package"
+    ],
+    "tags": ["validation", "library", "typescript", "zod"],
+    "reelSlides": [
+      {
+        "id": "zod-validator-slide-1",
+        "projectId": "zod-validator",
+        "title": "Benchmarking Performance",
+        "description": "Exhibiting 45% faster parse throughput than default Zod execution under stress.",
+        "image": "/media/projects/zod-validator/reel/slide-1.jpg",
+        "order": 0
+      }
+    ],
+    "displayOrder": 3,
+    "platform": "library",
+    "createdAt": "2026-06-12T12:00:00+00:00",
+    "updatedAt": "2026-06-12T12:00:00+00:00"
   }
 ]

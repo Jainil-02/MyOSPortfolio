@@ -1,5 +1,73 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap");
 @import "tailwindcss";
 @import "../shared/styles/tokens.css";
+
+:root {
+  /* Backgrounds */
+  --color-bg-base: #0a0f1a;
+  --color-bg-surface: rgba(30, 41, 59, 0.95);
+  --color-bg-title-bar: rgba(15, 23, 42, 0.6);
+  --color-bg-title-bar-dim: rgba(15, 23, 42, 0.3);
+  --color-bg-taskbar: rgba(15, 23, 42, 0.8);
+  --color-bg-card: rgba(30, 41, 59, 0.8);
+  --color-bg-sidebar: rgba(20, 30, 48, 0.6);
+  --color-bg-sidebar-active: rgba(59, 130, 246, 0.2);
+
+  /* Surfaces */
+  --color-surface-1: rgba(255, 255, 255, 0.05);
+  --color-surface-2: rgba(255, 255, 255, 0.08);
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-focus: rgba(255, 255, 255, 0.12);
+
+  /* Text */
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
+  --color-text-label: rgba(255, 255, 255, 0.45);
+
+  /* Accent */
+  --color-accent: #10b981;
+  --color-accent-hover: #059669;
+  --color-accent-blue: #3b82f6;
+  --color-accent-purple: #8b5cf6;
+  --color-accent-pink: #ec4899;
+  --color-accent-amber: #f59e0b;
+  --color-accent-orange: #f97316;
+
+  /* Window Controls */
+  --color-win-close: #ef4444;
+  --color-win-minimize: #fbbf24;
+  --color-win-maximize: #34d399;
+
+  /* Blur */
+  --blur-glass: blur(16px);
+  --blur-taskbar: blur(20px);
+
+  /* Border Radius */
+  --radius-window: 12px;
+  --radius-card: 12px;
+  --radius-button: 8px;
+  --radius-icon: 14px;
+  --radius-pill: 24px;
+
+  /* Shadows */
+  --shadow-window-focused: 0 8px 32px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-window-blur: 0 4px 16px rgba(0, 0, 0, 0.3);
+
+  /* Typography */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", "Courier New", monospace;
+
+  /* Animation */
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Wallpaper */
+  --wp-bg: linear-gradient(135deg, #0d1b2a 0%, #0a3040 40%, #062030 100%);
+}
 
 @theme inline {
   --color-background: var(--color-surface-desktop);
@@ -31,5 +99,5 @@ body {
 body {
   background: var(--color-surface-desktop);
   color: var(--color-text-primary);
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
 }

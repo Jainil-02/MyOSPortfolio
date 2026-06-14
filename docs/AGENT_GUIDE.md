@@ -26,13 +26,28 @@ The product must demonstrate:
 7. Update `docs/CHANGELOG.md` after major work.
 8. Update `docs/HANDOFF.md` before ending a session.
 
+## Mandatory Reading Order Before Any UI Work
+
+**Before implementing any UI or application, every agent MUST read in this order:**
+
+1. [DESIGN_SYSTEM.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/DESIGN_SYSTEM.md) — Visual source of truth. Screenshots in `docs/design/` are the highest authority.
+2. [PRE_PHASE_3_AUDIT.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PRE_PHASE_3_AUDIT.md) — Current technical and design debt review, layout blockers, and pre-requisites.
+3. [PHASE_3_ARCHITECTURE.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PHASE_3_ARCHITECTURE.md) — Ecosystem scope, layout templates (Layout A/B), and window sizing.
+4. [PROJECTS_APP_ARCHITECTURE.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PROJECTS_APP_ARCHITECTURE.md) — Blueprint for the flagship Projects application, detailing the Reel model and explorer/detail state views.
+5. `docs/PROJECT_STATUS.md` — Current phase progress and implementations list.
+6. `docs/TASK_BOARD.md` — Active task queue and priority execution checklist.
+7. `docs/HANDOFF.md` — Last session context and next recommended tasks.
+
+Failure to read [DESIGN_SYSTEM.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/DESIGN_SYSTEM.md) and [PHASE_3_ARCHITECTURE.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PHASE_3_ARCHITECTURE.md) before building UI is a rule violation.
+The design system overrides AI model design instincts and prior conventions.
+
 ## Agent Rules
 
 All future AI agents must follow these rules:
 
 - Always start by reading `docs/AGENT_GUIDE.md`, `docs/TASK_BOARD.md`, `docs/PROJECT_STATUS.md`, and `docs/HANDOFF.md`.
 - Use `docs/TASK_BOARD.md` as the authoritative task queue when selecting next work.
-- Review relevant architecture docs under `docs/architecture/` before changing architecture-related code.
+- Review relevant architecture docs under `docs/` and `docs/architecture/` before changing architecture-related code.
 - Review changed files before applying code changes.
 - Do not assume prior conversation history is available.
 - Keep changes aligned with existing domain boundaries and architecture principles.
@@ -86,10 +101,10 @@ The portfolio uses a reel-based project content model:
 - Reels require either an image or a video asset.
 - Reel ordering is enforced through the schema.
 
-Core decisions about reels:
+Core decisions about reels (see [PROJECTS_APP_ARCHITECTURE.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PROJECTS_APP_ARCHITECTURE.md)):
 
-- One Reel = One Project in the current architecture.
-- Future evolution may treat one project as multiple reel collections.
+- One Reel = One Project in the current architecture (v1).
+- Future evolution (v2) supports multiple named reels per project without breaking v1 schema, normalising them through the accessor layer (`src/data/projects/index.ts`).
 
 ## Browser Strategy
 
@@ -99,6 +114,7 @@ The current browser strategy is hybrid:
 - It targets desktop, tablet, and mobile as adaptive device modes.
 - The product should feel like an operating system rather than a traditional website.
 - The browser layer is the presentation boundary; runtime OS behavior should live in `src/core` and `src/features`.
+- External links (GitHub, LinkedIn, live sites) must open in the Browser App, not in external tabs, to preserve the OS illusion.
 
 ## Future AI / MCP Vision
 

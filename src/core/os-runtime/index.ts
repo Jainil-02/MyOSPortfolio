@@ -6,13 +6,17 @@
  * a stateful platform for application lifecycle and system-level services.
  */
 
+import { getSettings } from "../settings";
+
 export type OsRuntimeState = {
   booted: boolean;
+  locked: boolean;
   activeAppId: string | undefined;
 };
 
 const initialRuntimeState: OsRuntimeState = {
-  booted: true,
+  booted: false,
+  locked: true,
   activeAppId: undefined,
 };
 
@@ -29,6 +33,25 @@ function broadcastRuntimeState() {
 
 export function getOsRuntimeState(): Readonly<OsRuntimeState> {
   return runtimeState;
+}
+
+export function completeBoot() {
+  if (runtimeState.booted) return;
+  const settings = getSettings();
+  runtimeState = { ...runtimeState, booted: true, locked: settings.lockScreenEnabled };
+  broadcastRuntimeState();
+}
+
+export function unlock() {
+  if (!runtimeState.locked) return;
+  runtimeState = { ...runtimeState, locked: false };
+  broadcastRuntimeState();
+}
+
+export function lock() {
+  if (runtimeState.locked) return;
+  runtimeState = { ...runtimeState, locked: true };
+  broadcastRuntimeState();
 }
 
 export function setActiveApp(appId: string) {

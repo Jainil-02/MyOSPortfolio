@@ -1,3 +1,8 @@
+import type { ComponentType } from "react";
+import AboutApp from "../../apps/about";
+import ProjectsApp from "../../apps/projects";
+import SettingsApp from "../../apps/settings";
+
 /**
  * Minimal App Registry (features layer)
  *
@@ -12,15 +17,39 @@ export type AppMeta = {
   icon?: string;
   entry?: string;
   protected?: boolean;
+  component?: ComponentType;
+  defaultSize?: { width: number; height: number };
+  pinned?: boolean;
 };
 
 const registry: AppMeta[] = [
+  {
+    id: "about",
+    title: "About",
+    description: "About MyOS and dev portfolio info",
+    icon: "/icons/about.svg",
+    entry: "/",
+    component: AboutApp,
+    defaultSize: { width: 640, height: 480 },
+  },
   {
     id: "projects",
     title: "Projects",
     description: "Portfolio projects and reels",
     icon: "/icons/projects.svg",
     entry: "/apps/projects",
+    component: ProjectsApp,
+    defaultSize: { width: 960, height: 640 },
+    pinned: true,
+  },
+  {
+    id: "settings",
+    title: "Settings",
+    description: "Configure system options and preferences",
+    icon: "/icons/settings.svg",
+    entry: "/",
+    component: SettingsApp,
+    defaultSize: { width: 640, height: 480 },
   },
 ];
 
@@ -45,8 +74,10 @@ export function registerApp(app: AppMeta): void {
   }
 }
 
-export default {
+const appRegistry = {
   listApps,
   getApp,
   registerApp,
 };
+
+export default appRegistry;

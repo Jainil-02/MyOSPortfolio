@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import { getProjectBySlug } from "@data/projects";
@@ -21,7 +20,10 @@ export default async function ProjectDetailPage({ params }: Params) {
           <p className="mt-4 text-slate-600">
             The requested project could not be found. Please return to the Projects list.
           </p>
-          <Link href="/apps/projects" className="mt-6 inline-block rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-slate-700">
+          <Link
+            href="/apps/projects"
+            className="mt-6 inline-block rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-slate-700"
+          >
             Back to Projects
           </Link>
         </div>
@@ -37,7 +39,9 @@ export default async function ProjectDetailPage({ params }: Params) {
             <div>
               <p className="text-sm uppercase tracking-[0.24em] text-slate-500">Project detail</p>
               <h1 className="mt-4 text-5xl font-semibold text-slate-900">{project.title}</h1>
-              <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">{project.fullDescription}</p>
+              <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">
+                {project.fullDescription}
+              </p>
 
               <div className="mt-8 flex flex-wrap gap-3 text-sm text-slate-600">
                 <span className="rounded-full bg-slate-100 px-3 py-1">{project.category}</span>
@@ -48,7 +52,9 @@ export default async function ProjectDetailPage({ params }: Params) {
 
               <div className="mt-10 grid gap-4 sm:grid-cols-2">
                 <div>
-                  <h2 className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">Features</h2>
+                  <h2 className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">
+                    Features
+                  </h2>
                   <ul className="mt-4 list-disc space-y-2 pl-5 text-slate-700">
                     {project.features.length > 0 ? (
                       project.features.map((feature) => <li key={feature}>{feature}</li>)
@@ -58,10 +64,15 @@ export default async function ProjectDetailPage({ params }: Params) {
                   </ul>
                 </div>
                 <div>
-                  <h2 className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">Tech stack</h2>
+                  <h2 className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">
+                    Tech stack
+                  </h2>
                   <div className="mt-4 flex flex-wrap gap-2">
                     {project.techStack.map((tech) => (
-                      <span key={tech} className="rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-700">
+                      <span
+                        key={tech}
+                        className="rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-700"
+                      >
                         {tech}
                       </span>
                     ))}
@@ -121,20 +132,28 @@ export default async function ProjectDetailPage({ params }: Params) {
           <div>
             <h2 className="text-2xl font-semibold text-slate-900">Reel slides</h2>
             <p className="mt-3 text-slate-600">
-              Preview the project reel collection. Each slide must include either an image or a video.
+              Preview the project reel collection. Each slide must include either an image or a
+              video.
             </p>
             <div className="mt-6 space-y-4">
               {project.reelSlides.map((reel) => (
-                <article key={reel.id} className="rounded-3xl border border-slate-200 bg-slate-50 p-6">
+                <article
+                  key={reel.id}
+                  className="rounded-3xl border border-slate-200 bg-slate-50 p-6"
+                >
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <p className="text-lg font-semibold text-slate-900">{reel.title}</p>
                       <p className="mt-2 text-slate-600">{reel.description}</p>
                     </div>
-                    <span className="rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-700">Order {reel.order}</span>
+                    <span className="rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-700">
+                      Order {reel.order}
+                    </span>
                   </div>
                   <div className="mt-4 text-sm text-slate-500">
-                    {reel.video ? "Video asset available" : "Image asset available"}
+                    {(reel as { video?: string }).video
+                      ? "Video asset available"
+                      : "Image asset available"}
                   </div>
                 </article>
               ))}
@@ -145,7 +164,9 @@ export default async function ProjectDetailPage({ params }: Params) {
             <h2 className="text-2xl font-semibold text-slate-900">Project details</h2>
             <div className="mt-6 space-y-6 text-slate-700">
               <div>
-                <h3 className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">Challenges</h3>
+                <h3 className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">
+                  Challenges
+                </h3>
                 <ul className="mt-4 list-disc space-y-2 pl-5">
                   {project.challenges.length > 0 ? (
                     project.challenges.map((challenge) => <li key={challenge}>{challenge}</li>)
@@ -155,7 +176,9 @@ export default async function ProjectDetailPage({ params }: Params) {
                 </ul>
               </div>
               <div>
-                <h3 className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">Solutions</h3>
+                <h3 className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">
+                  Solutions
+                </h3>
                 <ul className="mt-4 list-disc space-y-2 pl-5">
                   {project.solutions.length > 0 ? (
                     project.solutions.map((solution) => <li key={solution}>{solution}</li>)
@@ -165,7 +188,9 @@ export default async function ProjectDetailPage({ params }: Params) {
                 </ul>
               </div>
               <div>
-                <h3 className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">Results</h3>
+                <h3 className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">
+                  Results
+                </h3>
                 <ul className="mt-4 list-disc space-y-2 pl-5">
                   {project.results.length > 0 ? (
                     project.results.map((result) => <li key={result}>{result}</li>)

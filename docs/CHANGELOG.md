@@ -2,6 +2,70 @@
 
 ## Unreleased
 
+### Phase 3 Projects App Foundational Architecture (Production Ready)
+
+- **Global Typography and Design Tokens**: Imported Google Inter and JetBrains Mono fonts and mapped all CSS design tokens inside `src/app/globals.css`.
+- **Registry Sizing & Pinned State**: Extended `AppMeta` registry configuration with `defaultSize` and `pinned` status, updating `WindowChrome` to scale to sizes specified by apps.
+- **Layout B Shared UI Primitives**: Scaffolds `AppSidebar` (240px width), `AppContentArea` (flex scrollable panel), and `AppTagBadge` (interactive/static category and status dot markers) in `src/shared/ui/`.
+- **Standalone Reels Engine**: Created a portable slide and video player carousel component `ReelPlayer` supporting touch gestures, keyboard arrows, and v2 named reels tabs selector.
+- **Projects App Layout B Architecture**: Completely rewrote the flagship Projects App. Integrates search, filter combination bar, sidebar project rows, details metadata section, cover image, and external link hooks that run via Browser App.
+- **TypeScript & Eslint Fixes**: Resolved all TS warnings and compiler errors under `exactOptionalPropertyTypes: true` and escaped unescaped JSX quotes.
+
+### Phase 2 Completion Pass (Production Ready)
+
+- **Wallpaper & Settings Integration**: Subscribed `src/core/wallpaper` to settings store changes to automatically update CSS variables (`--wp-bg`, etc.) when settings change.
+- **Lock Screen Gating**: Configured `completeBoot()` in `src/core/os-runtime` to read `lockScreenEnabled` from settings to bypass the lock screen when disabled.
+- **Window Management Fixes**: Changed `minimizeWindow()` to use explicit minimize behavior, and fixed window ID uniqueness by appending a random suffix when opening windows.
+- **Desktop Shell Sidebar Cleanup**: Removed the vertical icon sidebar in `src/shells/desktop` to eliminate duplication and align with the Samsung DeX layout.
+- **Translucent Tablet & Mobile Shells**: Added wallpaper support (`--wp-bg`) and glassmorphic headers/nav bars to mobile and tablet shells, and supported rendering component-based apps.
+- **Memoized Launchers**: Wrapped launch handlers in tablet shell in `useCallback` for optimized performance.
+- **Window Dragging & Maximize Fixes**: Moved `WindowChrome` dragging to global listeners (`window`) to prevent stuttering/sticking when cursor leaves window boundaries. Corrected maximized window coordinates to (0,0) top-left.
+- **WindowChrome Code Cleanup**: Renamed timer variable inside `useEffect` to `animId` to fix variable shadow warning.
+- **TypeScript & ESLint Fixes**: Resolved all TS warnings/errors including unescaped apostrophes, anonymous default exports, and synchronous setState inside effects in `CommandPalette`.
+
+### Phase 2b — OS Runtime Services (complete)
+
+- Implemented command palette (`src/features/command-palette/index.tsx`): `CommandPalette` component with full-screen overlay, centered search panel (540px max-width, glass-morphism backdrop), real-time app filtering by title/description, keyboard navigation (arrow keys, Enter to launch, Escape to close), and app launch integration via `setActiveApp` / `openWindow` / `focusWindow`. Wire into `src/shells/desktop/index.tsx` with global `useEffect` keydown listener for Ctrl+K / Cmd+K toggle and conditional rendering.
+- Implemented core notifications (`src/core/notifications/index.ts`): `Notification` type with id, title, message, type (info/success/warning/error), timestamp, read state. Module-level queue with `MAX_NOTIFICATIONS` cap (50). Subscriber API (`subscribeToNotifications`, `getNotifications`). Queue management (`addNotification`, `dismissNotification`, `markAsRead`, `markAllAsRead`, `clearAllNotifications`). Badge API (`getUnreadCount`). localStorage persistence.
+- Wired notifications into desktop shell taskbar (`src/shells/desktop/index.tsx`): added `NotificationTray` component with bell SVG icon, unread count badge (red circle indicator), click-to-open dropdown popover with scrollable notification list, per-notification type icon, dismiss button, mark-all-read button, and timestamp display.
+- Implemented corrected window content model: replaced page-route mapping with dynamic registry-driven Component mapping (`src/features/app-registry/index.ts`). Open windows now load client-side React Components concurrently inside draggable WindowChrome shells without depending on active page navigation.
+- Created standalone, independent application components under `src/apps`: AboutApp, ProjectsApp, and SettingsApp (wired directly to core settings state and localStorage persistence).
+- Redesigned root path page `/` with welcome desktop state offering quick start launch triggers.
+- Implemented core settings (`src/core/settings/index.ts`): `SettingsState` type with wallpaper, wallpaperVariant, theme, lockScreenEnabled fields. Module-level state with subscriber API (`subscribeToSettings`, `getSettings`, `updateSettings`, `resetSettings`). localStorage persistence (`my-os-portfolio-settings` key) with SSR-safe access. Partial update via `updateSettings()` merges into current state. Exports `ThemeMode` type.
+
+### Phase 2a — OS Shell Foundation
+
+- Implemented boot sequence (`src/features/boot/index.tsx`): full-screen dark gradient overlay, CSS-animated loading bar ("Loading system components..."), auto-transition after ~2.2s calling `completeBoot()`.
+- Modified `src/core/os-runtime/index.ts` to default `booted` to `false`, added `completeBoot()` function.
+- Integrated boot screen into `src/shells/index.tsx` via runtime state subscription — boot gates all shell rendering.
+- Implemented lock screen (`src/features/lock-screen/index.tsx`): full-screen lock overlay with live-updating 12h clock, formatted date, dark gradient wallpaper fallback (`--ls-bg` CSS var), fade-in animation, ambient clock glow, pulse unlock hint, and unlock via click/touch/key (Space/Enter/Escape).
+- Extended `src/core/os-runtime/index.ts` with `locked` state, `unlock()`, and `lock()` functions.
+- Integrated lock screen into `src/shells/index.tsx` — boot → lock → desktop flow is fully operational.
+- Implemented wallpaper system (`src/core/wallpaper/index.ts`): core module with subscriber API, `WallpaperConfig` state (type, value, variant), `getWallpaper()`, `setWallpaper()`, `subscribeToWallpaper()`, `resetWallpaper()`. CSS custom property side-effect sets `--wp-bg`, `--wp-type`, `--wp-variant` on `document.documentElement`. Default dark gradient fallback.
+- Updated `src/features/lock-screen/index.tsx` to consume `--wp-bg` CSS var instead of `--ls-bg` — wallpaper system now controls lock screen background.
+- Updated `src/shells/desktop/index.tsx` to consume `--wp-bg` CSS var — desktop surface now shows wallpaper.
+- Rewrote `src/shells/desktop/index.tsx`: replaced sidebar+content layout with full OS desktop. Fixed viewport layout, `--wp-bg` wallpaper background, left icon sidebar with app launcher (hover/active states), bottom glass taskbar (`backdrop-filter: blur(12px)`) with live `TaskbarClock`, running-window indicators with focus highlight, system tray placeholder, scrollable content area.
+- Implemented window chrome (`src/features/window-chrome/index.tsx`): floating window container with draggable title bar (app icon + title), macOS-style control buttons (close/minimize/maximize with red/yellow/green circles), glass-morphism background (`backdrop-filter: blur(16px)`), 12px rounded corners, focus-differentiated box-shadow. Position state via `useState` + mouse drag handlers with `useRef`-based offset tracking.
+- Added `minimizeWindow` and `maximizeWindow` to `src/core/window-manager/index.ts` — toggle functions for `WindowState.minimized`/`maximized` properties.
+- Updated `src/shells/desktop/index.tsx`: replaced simple content area with floating window surface; open windows render as `WindowChrome` with cascaded positioning (30px offset per window); focused window receives router `{children}` content; unfocused windows show title placeholder.
+- Implemented window controls & animations (`src/features/window-chrome/index.tsx`): CSS-animated open (scale(0.95)→1 + opacity 0→1), close (scale→0.95 + opacity→0, 250ms, `pointerEvents: none`), minimize (translateY(200px) + scale(0.5) + opacity 0.5), maximize (width/height/border-radius transition), focus dimming (non-focused windows opacity 0.85). Taskbar toggle: click focused → minimize, click unfocused → focus.
+- Implemented desktop icons (`src/shells/desktop/index.tsx`): added `DesktopIcon` component with double-click detection (300ms timer), single-click select, click-elsewhere deselect. Added `DesktopContextMenu` component with positioned popup, placeholder items (Refresh, Paste, Display Settings), dismiss on click outside or Escape. Icon grid renders on wallpaper surface behind windows.
+
+### Shell Integration
+
+- Extended tablet shell (`src/shells/tablet/index.tsx`) with full runtime state subscription, window manager integration, bottom-dock app launcher, touch-friendly controls, and active app/window display.
+- Extended mobile shell (`src/shells/mobile/index.tsx`) with full runtime state subscription, window manager integration, bottom-tab app launcher, path-aware back navigation, safe-area-aware bottom nav padding, and full-screen dark-themed content presentation.
+- Fixed Next.js `Route` type casts across all three shells (desktop, tablet, mobile) to use `as Route` instead of `as any`.
+
+### Documentation
+
+- Updated `docs/TASK_BOARD.md`: boot sequence moved to Completed (item 19), lock screen set as In Progress, Phase 2 completion revised to ~30%.
+- Updated `docs/PROJECT_STATUS.md`: Phase 2 revised to 30%, overall ~28%, boot sequence listed in implemented and recent changes.
+- Updated `docs/HANDOFF.md` with session state for boot sequence completion.
+- Updated `docs/CHANGELOG.md` with boot sequence implementation.
+
+---
+
 ### Core Runtime & Window Management
 
 - Implemented `src/core/os-runtime/index.ts` with runtime state, app activation, and subscriber pattern.
