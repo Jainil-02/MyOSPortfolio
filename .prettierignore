@@ -1,0 +1,10 @@
+.next
+AGENTS.md
+build
+CLAUDE.md
+coverage
+MY_OS_PORTFOLIO_SPEC.md
+node_modules
+out
+package-lock.json
+public

@@ -1,0 +1,35 @@
+@import "tailwindcss";
+@import "../shared/styles/tokens.css";
+
+@theme inline {
+  --color-background: var(--color-surface-desktop);
+  --color-foreground: var(--color-text-primary);
+  --color-accent: var(--os-color-accent);
+  --color-accent-contrast: var(--os-color-accent-contrast);
+  --color-surface-panel: var(--os-color-surface-panel);
+  --color-surface-window: var(--os-color-surface-window);
+  --color-text-muted: var(--os-color-text-secondary);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-geist-mono);
+  --radius-window: var(--os-radius-window);
+  --radius-modal: var(--os-radius-modal);
+  --radius-taskbar: var(--os-radius-taskbar);
+  --shadow-window: var(--os-shadow-window);
+  --shadow-dialog: var(--os-shadow-dialog);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background: var(--color-surface-desktop);
+  color: var(--color-text-primary);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}

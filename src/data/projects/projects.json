@@ -1,0 +1,38 @@
+[
+  {
+    "id": "sample-project",
+    "slug": "sample-project",
+    "title": "Sample Project",
+    "shortDescription": "A sample project for validation and testing.",
+    "fullDescription": "This is a sample project used to validate the project schema and provide sample data for UI development.",
+    "category": "Demo",
+    "techStack": ["React", "TypeScript"],
+    "githubUrl": "https://github.com/example/sample-project",
+    "liveUrl": "https://example.com",
+    "thumbnail": "/media/projects/sample-thumb.jpg",
+    "coverImage": "/media/projects/sample-cover.jpg",
+    "screenshots": [],
+    "featured": false,
+    "status": "planned",
+    "timeline": "Q2 2026",
+    "role": "Sole engineer",
+    "teamSize": 1,
+    "features": ["Feature one", "Feature two"],
+    "challenges": ["Challenge one"],
+    "solutions": ["Solution one"],
+    "results": ["Result one"],
+    "tags": ["sample", "demo"],
+    "reelSlides": [
+      {
+        "id": "sample-project-reel-1",
+        "projectId": "sample-project",
+        "title": "Sample Reel 1",
+        "description": "An intro reel for the sample project.",
+        "image": "/media/projects/sample.jpg",
+        "order": 0
+      }
+    ],
+    "createdAt": "2026-06-13T12:00:00+00:00",
+    "updatedAt": "2026-06-13T12:00:00+00:00"
+  }
+]
