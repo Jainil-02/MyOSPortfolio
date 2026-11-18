@@ -55,6 +55,11 @@
 - **Resume App**: Built master-detail Document Viewer matching Layout B with document statistics and PDF downloading triggers.
 - **Contact App**: Utility form layout with client input validation, success transitions, and quick-action direct links.
 - **Settings App Consistency**: Refactored Settings App spacing, font scaling, and custom switch styling.
+- **Files App (Stage 4.3)**: Implemented 745-line file explorer with sidebar sections (LOCATIONS, FOLDERS), breadcrumb navigation, grid/list view toggle, folder/file grid with icons, and bottom status bar. Registered with `pinned: true`, `defaultSize { width: 1100, height: 700 }`.
+- **Browser App (Stage 4.2)**: Implemented 593-line tabbed browser with address bar (back/forward/refresh buttons, URL input), iframe content renderer with sandbox, navigation history, and keyboard shortcuts (⌘+T new tab, ⌘+L focus address, ⌘+R reload, ⌘+W close tab). Registered with `pinned: true`, `defaultSize { width: 1000, height: 700 }`.
+- **Gallery App (Stage 5.1)**: Implemented 443-line image gallery with 4-column responsive thumbnail grid, hover metadata overlays, click-to-open lightbox viewer, and keyboard navigation (←/→ arrows, Escape). Registered with `pinned: true`, `defaultSize { width: 900, height: 640 }`.
+- **Terminal App (Stage 5.2)**: Implemented 479-line simulated shell with monospaced dark terminal, commands (help, whoami, ls projects, cat resume, open <app>, clear, neofetch), character-by-character typing animation, command history (ArrowUp/Down), and tab completion. Registered with `pinned: false`, `defaultSize { width: 760, height: 480 }`.
+- **Achievements App (Stage 5.3)**: Implemented 286-line achievement cards grid with 2-3 column responsive layout, category filtering (Project, Certification, Contribution, Recognition), and verification links. Registered with `pinned: false`, `defaultSize { width: 720, height: 560 }`.
 
 ### Phase 3 Projects App Foundational Architecture (Production Ready)
 

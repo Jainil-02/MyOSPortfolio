@@ -509,11 +509,11 @@ This section defines every application in the product. For technical layout deta
 | Property | Value |
 |---|---|
 | **App ID** | `files` |
-| **Status** | 🔴 Not yet implemented |
+| **Status** | ✅ Implemented |
 | **Recruiter Priority** | 🟡 HIGH (OS authenticity anchor) |
 | **Default Size** | 1100 × 700 px |
 | **Layout Pattern** | Layout B — Master-Detail with Sidebar |
-| **Pinned in Taskbar** | Yes (planned) |
+| **Pinned in Taskbar** | Yes |
 
 **Purpose**: The highest OS-fidelity app in the entire system. A recruiter who sees a real file browser — with breadcrumbs, folder icons, a status bar, and a sidebar with Locations and Folders — completely believes they are using an operating system, not viewing a website.
 
@@ -547,11 +547,11 @@ This section defines every application in the product. For technical layout deta
 | Property | Value |
 |---|---|
 | **App ID** | `browser` |
-| **Status** | 🔴 Not yet implemented |
+| **Status** | ✅ Implemented |
 | **Recruiter Priority** | 🟡 HIGH (OS contract requirement) |
 | **Default Size** | 1000 × 700 px |
 | **Layout Pattern** | Full content (no sidebar) — browser chrome at top |
-| **Pinned in Taskbar** | Yes (planned) |
+| **Pinned in Taskbar** | Yes |
 
 **Purpose**: Maintains the OS illusion when a user navigates to an external URL. Instead of opening a new browser tab and breaking the desktop experience, external links open in this Browser App inside a window.
 
@@ -583,11 +583,11 @@ This section defines every application in the product. For technical layout deta
 | Property | Value |
 |---|---|
 | **App ID** | `gallery` |
-| **Status** | 🔴 Not yet implemented |
+| **Status** | ✅ Implemented |
 | **Recruiter Priority** | 🟢 MEDIUM |
 | **Default Size** | 900 × 640 px |
 | **Layout Pattern** | Full grid — no sidebar |
-| **Pinned in Taskbar** | Yes (planned) |
+| **Pinned in Taskbar** | Yes |
 
 **Purpose**: Visual proof of UI/UX and design capability. A grid of project screenshots, design assets, and UI mockups provides immediate visual evidence of Jainil's eye for quality.
 
@@ -620,7 +620,7 @@ This section defines every application in the product. For technical layout deta
 | Property | Value |
 |---|---|
 | **App ID** | `achievements` |
-| **Status** | 🔴 Not yet implemented |
+| **Status** | ✅ Implemented |
 | **Recruiter Priority** | 🟢 MEDIUM |
 | **Default Size** | 720 × 560 px |
 | **Layout Pattern** | Layout A — Card Grid |
@@ -654,7 +654,7 @@ This section defines every application in the product. For technical layout deta
 | Property | Value |
 |---|---|
 | **App ID** | `terminal` |
-| **Status** | 🔴 Not yet implemented |
+| **Status** | ✅ Implemented |
 | **Recruiter Priority** | 🟢 MEDIUM (power-user delight) |
 | **Default Size** | 760 × 480 px |
 | **Layout Pattern** | Full content — terminal interface |
@@ -1074,9 +1074,9 @@ These are the deliberate moments designed to make recruiters stop, remember, and
 | **Command Palette** | ✅ Implemented | Ctrl+K opens a Spotlight-style overlay. A technical recruiter knows immediately: this developer has keyboard-first product thinking. |
 | **Projects Reel Mode** | ✅ Implemented | Switching to Reel view in the Projects App shows screenshots with keyboard/swipe navigation — a visual pitch for each project. |
 | **Notification Center** | ✅ Implemented | A real notification queue in the taskbar tray with dismiss, read, and clear interactions. |
-| **Terminal App** | 🔴 Planned | `apex@os:~$ neofetch` prints a custom ASCII ApexOS logo with system specs. The `open about` command launches the About App. A technical recruiter who discovers this will mention it in their next conversation. |
+| **Terminal App** | ✅ Implemented | `apex@os:~$ neofetch` prints a custom ASCII ApexOS logo with system specs. The `open about` command launches the About App. A technical recruiter who discovers this will mention it in their next conversation. |
 | **Resume In-OS Download** | ✅ Implemented (PDF pending) | A resume you can read, print, and download without ever leaving the OS. The form factor adds gravity to the document. |
-| **Files App Authenticity** | 🔴 Planned | A real file browser. Real breadcrumbs. Real folder icons. A status bar saying "5 items, 1 selected • ☁ Synced." Double-clicking `Resume.pdf` opens the Resume App. The strongest OS authenticity moment in the entire product. |
+| **Files App Authenticity** | ✅ Implemented | A real file browser. Real breadcrumbs. Real folder icons. A status bar saying "5 items, 1 selected • ☁ Synced." Double-clicking `Resume.pdf` opens the Resume App. The strongest OS authenticity moment in the entire product. |
 | **Future: AI Assistant** | 🔵 Phase 4 | A recruiter asks "What is Jainil's experience with React Native?" and a chat interface inside ApexOS answers. A portfolio that talks back is unforgettable. |
 
 ---

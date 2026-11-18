@@ -11,9 +11,9 @@ Every AI agent must read `docs/TASK_BOARD.md` before choosing work and must upda
 
 ## Current Phase
 
-**Phase 3: App Ecosystem** — 🟡 In Progress.
+**Phase 3: App Ecosystem** — ✅ Complete.
 
-Phase 1 (Foundation) and Phase 2 (OS Runtime and Shells) are fully complete, audited, and closed. We are now working on Phase 3 to implement the client-side portfolio applications. All implementation details must conform to [DESIGN_SYSTEM.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/DESIGN_SYSTEM.md), [PHASE_3_ARCHITECTURE.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PHASE_3_ARCHITECTURE.md), and [PROJECTS_APP_ARCHITECTURE.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PROJECTS_APP_ARCHITECTURE.md).
+Phase 1 (Foundation), Phase 2 (OS Runtime and Shells), Phase 2.5 (Design System Sync), and Phase 3 (App Ecosystem) are fully complete, audited, and verified. All core ecosystem apps (Files, Browser, Gallery, Terminal, Achievements) are implemented and integrated. We are preparing for Phase 4 (Polish and AI Integration).
 
 ---
 
@@ -22,8 +22,8 @@ Phase 1 (Foundation) and Phase 2 (OS Runtime and Shells) are fully complete, aud
 - **Phase 1 — Foundation**: ✅ Complete. Tooling, schemas, documentation, architecture boundaries, config, and data validation all in place.
 - **Phase 2 — OS Runtime and Shells**: ✅ Complete (100%). All P0/P1 fixes completed: wallpaper/settings integration, lock screen gating via settings, explicit window minimize, unique window IDs, desktop icon sidebar cleanup, tablet/mobile wallpaper support, component-based app execution, global dragging, window chrome layout, notifications, command palette, and maximize positioning fixes.
 - **Phase 2.5 — Design System Governance**: ✅ Complete. Design Architecture Review conducted, [DESIGN_SYSTEM.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/DESIGN_SYSTEM.md) and [DESIGN_REVIEW.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/DESIGN_REVIEW.md) created, agent rules established.
-- **Phase 3 — App Ecosystem**: 🟡 In progress. Focusing on infrastructure prerequisites, shared UI components, and flagship app implementation.
-- **Phase 4 — Polish and AI Integration**: 🔴 Not started.
+- **Phase 3 — App Ecosystem**: ✅ Complete (100%). All core recruiter and ecosystem applications (Files, Browser, Gallery, Terminal, Achievements) implemented, registered, and integrated with OS runtime.
+- **Phase 4 — Polish and AI Integration**: 🟡 In progress. Focusing on design consistency, recruiter flow tests, and final polish.
 - **Phase 5 — Future Vision**: 🔴 Not started.
 
 ---
@@ -81,7 +81,7 @@ Phase 1 (Foundation) and Phase 2 (OS Runtime and Shells) are fully complete, aud
 
 ## In Progress
 
-- None (Projects App V2 completed successfully).
+- Stage 7: Post-Implementation Polish (Recruiter flow tests, window resize handles, sidebar cleanup).
 
 ---
 
@@ -93,20 +93,15 @@ Phase 1 (Foundation) and Phase 2 (OS Runtime and Shells) are fully complete, aud
 
 ## Next Actions
 
-> **⚠️ Attention**: Follow [PHASE_3_ARCHITECTURE.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PHASE_3_ARCHITECTURE.md) for the exact step-by-step implementation order of the ecosystem apps. Do not register any app in the registry until it has real content.
+> **⚠️ Attention**: Phase 3 apps are now complete. Move to Phase 4 focus areas.
 
-### Phase 3 — App Ecosystem (Priority Order)
+### Phase 4 — Polish and AI Integration
 
-11. **Files App**:
-    - Build `src/apps/files/` representing the highest OS-fidelity app, matching `docs/design/file-app.png` layout, folders, and bottom status bar.
-12. **Browser App**:
-    - Build `src/apps/browser/` with address bar and iframe/content renderer.
-13. **Gallery App**:
-    - Build `src/apps/gallery/` with an image thumbnail grid.
-14. **Terminal App**:
-    - Build `src/apps/terminal/` with simulated monospaced command shell (`whoami`, `neofetch`, etc.).
-15. **Achievements App**:
-    - Build `src/apps/achievements/` with card grids.
+1. **Recruiter Flow Test**: Verify the 3-minute "Boot → Lock → Desktop → About → Projects → Resume" path.
+2. **Window Resize Handles**: Add native resizers to `WindowChrome`.
+3. **Settings App Sidebar Cleanup**: Finalize layout and spacing.
+4. **Taskbar Refinement**: Distinguish between pinned and running indicators.
+5. **AI Assistant Integration**: Implement Phase 4 AI features (stretch).
 
 ---
 
