@@ -1,448 +1,158 @@
 /**
- * OmaProcessRunner — OMA @open-multi-agent/core 1.24.0 Adapter
+ * OMA process adapter.
  *
- * Uses OMA's documented process backend via `run()` with AbortSignal.timeout mapping.
- * Distinguishes OMA-provided capabilities from custom adapter functionality.
- * Documents process backend limitations per OMA 1.24.0 specs.
- *
- * Key design decisions (per OMA 1.24.0 process backend):
- * - `run()` wraps `child_process.spawn` with AbortController integration
- * - `AbortSignal.timeout()` maps to `TimeoutError`; cancellation maps to `AbortError`
- * - Process backend is "stateless between runs"; run record is "current authoritative state"
- * - No built-in secret redaction — application must implement output sanitization
- * - FileStore supports sequential restart recovery but no distributed locking
- * - No built-in checkpoint/resume — these are application-level concerns
- * - ACP richer session path not directly usable without additional adapter work
+ * OMA owns subprocess execution. This adapter owns cancellation coordination,
+ * redaction, retry-attempt accounting and local result persistence.
+ * OMA's process runner is not treated as a durable workflow engine.
  */
-
-import { run, Run as OmaRun, AbortSignal } from '@open-multi-agent/core/process';
+import { run } from '@open-multi-agent/core/process';
 import type {
-  PersistenceStore,
-  OmaProcessRunnerOptions,
-  ProcessResult,
-  RunState,
-  RunMetadata,
-  ApprovalRecord,
-  RedactionPattern,
-  TaskContract,
-  AgentRole,
+  PersistenceStore, OmaProcessRunnerOptions, ProcessResult, RunState,
+  RunMetadata, AgentRole,
 } from './types.v2';
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import { randomUUID } from 'node:crypto';
 
-// ---------------------------------------------------------------------------
-// Constants
-// ---------------------------------------------------------------------------
-
-/**
- * Known secret patterns for redaction. Same patterns as CustomProcessRunner
- * for consistent behavior across both implementations.
- */
-const KNOWN_SECRET_PATTERNS: RegExp[] = [
-  /<<<SECRET:::.*>>>/g,
+const SECRET_PATTERNS = [
+  /<<<SECRET:::[\\s\\S]*?>>>/g,
   /sk-[a-zA-Z0-9]{20,}/g,
   /ghp_[a-zA-Z0-9]{36}/g,
-  /anthr_api_key=[^&]*/g,
+  /anthr_api_key=[^&\\s]*/g,
 ];
 
-/**
- * Redaction replacement string.
- */
-const REDACTION_REPLACEMENT = '[REDACTED]';
-
-/**
- * Regex to identify secret-containing environment variable values.
- */
-const SECRET_ENV_PATTERN = /(?:sk-|ghp_|anthr_api_key)=[^\s]+/g;
-
-/**
- * Default maximum retry attempts before the controller enters blocked state.
- */
-const DEFAULT_MAX_RETRIES = 3;
-
-/**
- * Default timeout in milliseconds for process execution.
- */
-const DEFAULT_TIMEOUT_MS = 30000;
-
-/**
- * Path to the JSON persistence store for durable state.
- */
-const DEFAULT_STORE_PATH = path.join(process.cwd(), '.oma-run-store.json');
-
-// ---------------------------------------------------------------------------
-// OmaProcessRunner class
-// ---------------------------------------------------------------------------
-
 export class OmaProcessRunner {
-  /** Path to the JSON persistence store */
-  private storePath: string;
-  /** Maximum number of retry attempts */
-  private maxRetries: number;
-  /** Default timeout in milliseconds */
-  private timeoutMs: number;
-  /** Whether AbortSignal.timeout mapping is enabled */
-  private enableTimeout: boolean;
-  /** Track retry counts per task ID */
-  private retryCounts: Map<string, number> = new Map();
-  /** Track in-flight run IDs */
-  private inFlightRuns: Map<string, OmaRun> = new Map();
-  /** Store instance for durable persistence */
-  private store: PersistenceStore;
+  private readonly storePath: string;
+  private readonly maxAttempts: number;
+  private readonly timeoutMs: number;
+  private readonly enableTimeout: boolean;
+  private readonly attempts = new Map<string, number>();
+  private readonly controllers = new Map<string, AbortController>();
+  private readonly store: PersistenceStore;
 
-  /**
-   * Creates a new OmaProcessRunner instance.
-   *
-   * @param options Configuration options
-   */
   constructor(options: OmaProcessRunnerOptions = {}) {
-    this.storePath = options.storePath ?? DEFAULT_STORE_PATH;
-    this.maxRetries = options.maxRetries ?? DEFAULT_MAX_RETRIES;
-    this.timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+    this.storePath = options.storePath ?? path.join(process.cwd(), '.oma-run-store.json');
+    this.maxAttempts = Math.max(1, options.maxRetries ?? 3);
+    this.timeoutMs = options.timeoutMs ?? 30_000;
     this.enableTimeout = options.enableTimeout ?? true;
-
-    // Initialize persistence store
     this.store = {
-      read: async (): Promise<Record<string, unknown>> => {
+      read: async () => {
         try {
-          if (await fs.promises.access(this.storePath).then(() => true).catch(() => false)) {
-            const data = await fs.promises.readFile(this.storePath, 'utf-8');
-            return JSON.parse(data);
-          }
-          return {};
-        } catch {
-          return {};
+          return JSON.parse(await fs.promises.readFile(this.storePath, 'utf8')) as Record<string, unknown>;
+        } catch (error) {
+          if ((error as NodeJS.ErrnoException).code === 'ENOENT') return {};
+          throw error;
         }
       },
-      write: async (key: string, value: unknown): Promise<void> => {
-        const store = await this.store.read();
-        store[key] = value;
-        await fs.promises.writeFile(this.storePath, JSON.stringify(store, null, 2));
+      write: async (key, value) => {
+        const state = await this.store.read();
+        state[key] = value;
+        await this.writeAtomically(state);
       },
-      has: async (key: string): Promise<boolean> => Object.prototype.hasOwnProperty.call(await this.store.read(), key),
-      delete: async (key: string): Promise<void> => {
-        const store = await this.store.read();
-        delete store[key];
-        await this.store.write(key, store);
+      has: async key => Object.hasOwn(await this.store.read(), key),
+      delete: async key => {
+        const state = await this.store.read();
+        delete state[key];
+        await this.writeAtomically(state);
       },
     };
   }
 
-  // -------------------------------------------------------------------
-  // Public API
-  // -------------------------------------------------------------------
-
-  /**
-   * Execute a process using OMA's run() backend.
-   *
-   * @param command The command to execute (e.g., './scripts/run-tasks.sh')
-   * @param args Command-line arguments
-   * @param metadata Run metadata (task, role, cwd, env, signal)
-   * @returns Promise resolving to ProcessResult
-   */
-  async run(
-    command: string,
-    args: string[] = [],
-    metadata: RunMetadata
-  ): Promise<ProcessResult> {
+  async run(command: string, args: string[] = [], metadata: RunMetadata): Promise<ProcessResult> {
     const taskId = metadata.task.id;
-    const role = metadata.role;
-
-    // Initialize retry count for this task if not already tracked
-    if (!this.retryCounts.has(taskId)) {
-      this.retryCounts.set(taskId, 0);
-    }
-
-    // Check retry limits before proceeding
-    const currentRetries = this.retryCounts.get(taskId)!;
-    if (currentRetries >= this.maxRetries) {
-      // Return blocked result — no more attempts allowed
+    const attempt = this.attempts.get(taskId) ?? 0;
+    if (attempt >= this.maxAttempts) {
       return {
-        exitCode: -1,
-        stdout: '',
-        stderr: `RUN BLOCKED: max retries (${this.maxRetries}) exceeded for task ${taskId}`,
-        timedOut: false,
-        cancelled: false,
-        finalState: 'blocked',
+        exitCode: -1, stdout: '', stderr: `RUN BLOCKED: maximum attempts (${this.maxAttempts}) reached for task ${taskId}`,
+        timedOut: false, cancelled: false, finalState: 'blocked',
       };
     }
+    this.attempts.set(taskId, attempt + 1);
 
-    // Build environment: allowlisting with explicit secret redaction
-    const baseEnv = this.mergeEnvironments(metadata.env ?? {});
+    const runId = randomUUID();
+    const controller = new AbortController();
+    this.controllers.set(runId, controller);
+    const forwardAbort = () => controller.abort(metadata.signal?.reason);
+    if (metadata.signal?.aborted) forwardAbort();
+    else metadata.signal?.addEventListener('abort', forwardAbort, { once: true });
 
-    // Build AbortSignal: use timeout if enabled, otherwise no explicit signal
-    const signal = this.enableTimeout
-      ? AbortSignal.timeout(this.timeoutMs)
-      : undefined;
+    let timedOut = false;
+    let cancelled = false;
+    const timer = this.enableTimeout ? setTimeout(() => {
+      timedOut = true;
+      controller.abort(new DOMException('Process timed out', 'TimeoutError'));
+    }, metadata.task.timeoutMs ?? this.timeoutMs) : undefined;
 
-    // Execute via OMA's run() — this wraps child_process.spawn internally
-    // The run() function signature from @open-multi-agent/core/process:
-    //   run({ command, args, cwd, timeout, env, signal })
-    // Returns a promise that resolves to a Run object with:
-    //   - exitCode: number
-    //   - stdout: string
-    //   - stderr: string
-    //   - timedOut: boolean (set when AbortSignal.timeout fires)
-    //   - cancelled: boolean (set when AbortError is thrown)
-    //   - error: Error | null
-    const omaRun: OmaRun = await run({
-      command,
-      args,
-      cwd: metadata.cwd,
-      timeout: this.enableTimeout ? this.timeoutMs : undefined,
-      env: baseEnv,
-      signal,
-    });
-
-    // Track the in-flight run
-    this.inFlightRuns.set(taskId, omaRun);
-
-    // Map OMA errors to our result types
-    let mappedTimedOut = false;
-    let mappedCancelled = false;
-
-    // Check if the run completed due to timeout
-    if (theomaRun.timedOut) {
-      mappedTimedOut = true;
+    try {
+      const env = this.buildEnvironment(metadata.env ?? {});
+      const result = await run({
+        command, args, cwd: metadata.cwd, env, signal: controller.signal,
+      });
+      cancelled = !timedOut && (controller.signal.aborted || result.cancelled === true);
+      timedOut = timedOut || result.error?.name === 'TimeoutError' || result.timedOut === true;
+      const stdout = this.redact(String(result.stdout ?? ''));
+      const stderr = this.redact(String(result.stderr ?? result.error?.message ?? ''));
+      const exitCode = typeof result.exitCode === 'number' ? result.exitCode : -1;
+      const finalState: RunState = timedOut ? 'timedOut' : cancelled ? 'cancelled' : 'completed';
+      await this.persistResult({ taskId, role: metadata.role, exitCode, stdout, stderr, finalState, timedOut, cancelled });
+      return { exitCode, stdout, stderr, timedOut, cancelled, finalState };
+    } catch (error) {
+      const err = error as Error;
+      timedOut = timedOut || err.name === 'TimeoutError';
+      cancelled = !timedOut && (err.name === 'AbortError' || controller.signal.aborted);
+      const stderr = this.redact(err.message ?? String(error));
+      const finalState: RunState = timedOut ? 'timedOut' : cancelled ? 'cancelled' : 'completed';
+      await this.persistResult({ taskId, role: metadata.role, exitCode: -1, stdout: '', stderr, finalState, timedOut, cancelled });
+      return { exitCode: -1, stdout: '', stderr, timedOut, cancelled, finalState, error: err };
+    } finally {
+      if (timer) clearTimeout(timer);
+      metadata.signal?.removeEventListener('abort', forwardAbort);
+      this.controllers.delete(runId);
     }
-
-    // Check if the run was cancelled via AbortError
-    if (theomaRun.cancelled) {
-      mappedCancelled = true;
-    }
-
-    // Apply secret redaction to stdout and stderr
-    const redactedStdout = this.redactSecrets(theomaRun.stdout);
-    const redactedStderr = this.redactSecrets(theomaRun.stderr);
-
-    // Determine final state
-    const finalState = this.determineFinalState(
-      theomaRun.exitCode,
-      mappedTimedOut,
-      mappedCancelled
-    );
-
-    // Persist result to durable store
-    await this.persistResult({
-      taskId,
-      role,
-      exitCode: theomaRun.exitCode,
-      rawStdout: theomaRun.stdout,
-      rawStderr: theomaRun.stderr,
-      redactedStdout,
-      redactedStderr,
-      finalState,
-      timedOut: mappedTimedOut,
-      cancelled: mappedCancelled,
-    });
-
-    // Remove from in-flight tracking
-    this.inFlightRuns.delete(taskId);
-
-    // Return the processed result
-    return {
-      exitCode: theomaRun.exitCode,
-      stdout: redactedStdout,
-      stderr: redactedStderr,
-      timedOut: mappedTimedOut,
-      cancelled: mappedCancelled,
-      finalState,
-    };
   }
 
-  /**
-   * Cancel all in-flight runs.
-   * Sends AbortController signal to cancel OMA runs.
-   */
   async cancelAll(): Promise<void> {
-    // Cancel all tracked in-flight runs via AbortController
-    // OMA runs honor AbortSignal — sending the signal cancels the run
-    const runs = Array.from(this.inFlightRuns.values());
-
-    for (const run of runs) {
-      try {
-        // OMA runs honor AbortSignal; we can re-signal or the run itself handles cancellation
-        // The run's signal may already have been set to timeout; if we need explicit cancel:
-        if (run.signal) {
-          run.signal.abort();
-        }
-      } catch {
-        // Ignore errors on individual runs
-      }
+    for (const controller of this.controllers.values()) {
+      if (!controller.signal.aborted) controller.abort(new DOMException('Cancelled by controller', 'AbortError'));
     }
-
-    // Clear all tracked runs
-    this.inFlightRuns.clear();
-    this.retryCounts.clear();
   }
 
-  /**
-   * Get the current persistent store state.
-   */
   async getStore(): Promise<Record<string, unknown>> {
     return this.store.read();
   }
 
-  /**
-   * Save a result to the durable JSON store.
-   *
-   * @param result The process result to persist
-   */
-  private async saveResult(result: {
-    taskId: string;
-    role: AgentRole;
-    exitCode: number;
-    rawStdout: string;
-    rawStderr: string;
-    redactedStdout: string;
-    redactedStderr: string;
-    finalState: RunState;
-    timedOut: boolean;
-    cancelled: boolean;
-  }): Promise<void> {
-    const store = await this.store.read();
-
-    // Store the result under a key derived from task ID
-    const key = `task:${result.taskId}:${Date.now()}`;
-    store[key] = {
-      taskId: result.taskId,
-      role: result.role,
-      exitCode: result.exitCode,
-      rawStdout: result.rawStdout,
-      rawStderr: result.rawStderr,
-      redactedStdout: result.redactedStdout,
-      redactedStderr: result.redactedStderr,
-      finalState: result.finalState,
-      timedOut: result.timedOut,
-      cancelled: result.cancelled,
-      persistedAt: new Date().toISOString(),
-    };
-
-    await this.store.write(key, store[key]);
-  }
-
-  // -------------------------------------------------------------------
-  // Private helpers
-  // -------------------------------------------------------------------
-
-  /**
-   * Merge environment variables: allowlisting with secret redaction.
-   *
-   * @param customEnv Additional environment variables to include
-   * @returns Merged environment object with allowlisted keys only
-   */
-  private mergeEnvironments(customEnv: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
-    // Start with allowlisted keys from process.env
-    const allowlisted: Record<string, string> = {};
-
-    // Note: OMA process backend applies its own environment allowlisting;
-    // this adapter adds application-level allowlisting on top
-    for (const key of ['PATH', 'HOME', 'USER', 'TEMP']) {
-      if (key in process.env) {
-        allowlisted[key] = process.env[key]!;
-      }
+  private buildEnvironment(custom: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
+    const allowed = new Set([
+      'PATH', 'Path', 'PATHEXT', 'SystemRoot', 'WINDIR', 'COMSPEC',
+      'TEMP', 'TMP', 'HOME', 'USERPROFILE', 'USER', 'USERNAME',
+    ]);
+    const env: NodeJS.ProcessEnv = {};
+    for (const key of allowed) if (process.env[key] !== undefined) env[key] = process.env[key];
+    for (const [key, value] of Object.entries(custom)) {
+      if (allowed.has(key) && value !== undefined) env[key] = value;
     }
-
-    // Overlay custom environment — but only allowlisted keys survive
-    // Unknown keys from customEnv are stripped to prevent secret leakage
-    const merged: Record<string, string> = { ...allowlisted, ...customEnv };
-
-    // Filter to only allowlisted keys
-    const filtered: Record<string, string> = {};
-    for (const key of ['PATH', 'HOME', 'USER', 'TEMP']) {
-      if (key in merged) {
-        filtered[key] = merged[key]!;
-      }
-    }
-
-    return filtered;
+    return env;
   }
 
-  /**
-   * Redact secrets from a string using known patterns.
-   * Identical implementation to CustomProcessRunner for consistency.
-   *
-   * @param input The string to redact
-   * @returns Input with all known secret patterns replaced by [REDACTED]
-   */
-  private redactSecrets(input: string): string {
-    let result = input;
-    for (const pattern of KNOWN_SECRET_PATTERNS) {
-      result = result.replace(pattern, REDACTION_REPLACEMENT);
-    }
-    // Also mask any env-like secret patterns that may appear in output
-    result = result.replace(SECRET_ENV_PATTERN, (match) => {
-      return match.replace(/=[^&]+/, '=[REDACTED]');
-    });
-    return result;
+  private redact(value: string): string {
+    return SECRET_PATTERNS.reduce((text, pattern) => text.replace(pattern, '[REDACTED]'), value);
   }
 
-  /**
-   * Determine the final run state based on OMA run outcomes.
-   *
-   * Critical distinction:
-   * - `exitCode !== 0` + !timedOut + !cancelled → completed (failure)
-   * - timedOut === true → 'timedOut' state (mapped from AbortSignal.timeout → TimeoutError)
-   * - cancelled === true → 'cancelled' state (mapped from AbortError)
-   * - Must distinguish timeout from cancellation; both may manifest similarly
-   */
-  private determineFinalState(
-    exitCode: number,
-    timedOut: boolean,
-    cancelled: boolean
-  ): RunState {
-    // Timeout takes precedence in mapping — AbortSignal.timeout fires first
-    if (timedOut) return 'timedOut';
-    if (cancelled) return 'cancelled';
-
-    if (exitCode === 0) return 'completed';
-    if (exitCode !== 0) return 'completed'; // failure still completes, exit code distinguishes
-    return 'completed';
-  }
-
-  /**
-   * Persist a run result to the durable JSON store.
-   * Delegates to saveResult for the actual implementation.
-   */
   private async persistResult(result: {
-    taskId: string;
-    role: AgentRole;
-    exitCode: number;
-    rawStdout: string;
-    rawStderr: string;
-    redactedStdout: string;
-    redactedStderr: string;
-    finalState: RunState;
-    timedOut: boolean;
-    cancelled: boolean;
+    taskId: string; role: AgentRole; exitCode: number; stdout: string; stderr: string;
+    finalState: RunState; timedOut: boolean; cancelled: boolean;
   }): Promise<void> {
-    await this.saveResult({
-      taskId: result.taskId,
-      role: result.role,
-      exitCode: result.exitCode,
-      rawStdout: result.rawStdout,
-      rawStderr: result.rawStderr,
-      redactedStdout: result.redactedStdout,
-      redactedStderr: result.redactedStderr,
-      finalState: result.finalState,
-      timedOut: result.timedOut,
-      cancelled: result.cancelled,
-    });
+    const state = await this.store.read();
+    state[`task:${result.taskId}:${Date.now()}:${randomUUID()}`] = {
+      ...result, persistedAt: new Date().toISOString(),
+    };
+    await this.writeAtomically(state);
   }
 
-  /**
-   * Check if a stored approval record is valid for the given artifact hash.
-   *
-   * @param storedApproval The approval record from store
-   * @param expectedHash The expected artifact hash
-   * @returns Whether the approval is valid (matching hash and approved decision)
-   */
-  private isApprovalValid(storedApproval: ApprovalRecord, expectedHash: string): boolean {
-    // OMA durable-approvals API binds approval to run ID and content hash
-    // Hash mismatch invalidates stale approval
-    if (storedApproval.decision !== 'approved') return false;
-    if (!storedApproval.artifactHash) return false;
-    // Compare hashes — sha256:abc123 must match current artifact hash
-    return storedApproval.artifactHash === expectedHash;
+  private async writeAtomically(state: Record<string, unknown>): Promise<void> {
+    await fs.promises.mkdir(path.dirname(this.storePath), { recursive: true });
+    const tempPath = `${this.storePath}.${randomUUID()}.tmp`;
+    await fs.promises.writeFile(tempPath, JSON.stringify(state, null, 2), { mode: 0o600 });
+    await fs.promises.rename(tempPath, this.storePath);
   }
 }
