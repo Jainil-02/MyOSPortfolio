@@ -1,6 +1,11 @@
 import type { ComponentType } from "react";
 import AboutApp from "../../apps/about";
 import ProjectsApp from "../../apps/projects";
+import FilesApp from "../../apps/files";
+import BrowserApp from "../../apps/browser";
+import GalleryApp from "../../apps/gallery";
+import TerminalApp from "../../apps/terminal";
+import AchievementsApp from "../../apps/achievements";
 import SettingsApp from "../../apps/settings";
 import ResumeApp from "../../apps/resume";
 import ContactApp from "../../apps/contact";
@@ -84,6 +89,56 @@ const registry: AppMeta[] = [
     entry: "/",
     component: SettingsApp,
     defaultSize: { width: 640, height: 480 },
+  },
+  {
+    id: "files",
+    title: "Files",
+    description: "File browser and document manager",
+    icon: "/icons/files.svg",
+    entry: "/apps/files",
+    component: FilesApp,
+    defaultSize: { width: 1100, height: 700 },
+    pinned: true,
+  },
+  {
+    id: "browser",
+    title: "Browser",
+    description: "Web browser with tabs and address bar",
+    icon: "/icons/browser.svg",
+    entry: "/apps/browser",
+    component: BrowserApp,
+    defaultSize: { width: 1000, height: 700 },
+    pinned: true,
+  },
+  {
+    id: "gallery",
+    title: "Gallery",
+    description: "Image gallery with lightbox preview",
+    icon: "/icons/gallery.svg",
+    entry: "/apps/gallery",
+    component: GalleryApp,
+    defaultSize: { width: 900, height: 640 },
+    pinned: true,
+  },
+  {
+    id: "terminal",
+    title: "Terminal",
+    description: "Simulated command-line interface",
+    icon: "/icons/terminal.svg",
+    entry: "/apps/terminal",
+    component: TerminalApp,
+    defaultSize: { width: 760, height: 480 },
+    pinned: false,
+  },
+  {
+    id: "achievements",
+    title: "Achievements",
+    description: "Portfolio achievements and milestones",
+    icon: "/icons/achievements.svg",
+    entry: "/apps/achievements",
+    component: AchievementsApp,
+    defaultSize: { width: 720, height: 560 },
+    pinned: false,
   },
 ];
 

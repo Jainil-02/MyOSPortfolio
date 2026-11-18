@@ -211,5 +211,375 @@
     "platform": "library",
     "createdAt": "2026-06-12T12:00:00+00:00",
     "updatedAt": "2026-06-12T12:00:00+00:00"
+  },
+  {
+    "id": "task-flow",
+    "slug": "task-flow",
+    "title": "TaskFlow Dashboard",
+    "shortDescription": "A collaborative task management dashboard with real-time updates and team analytics.",
+    "fullDescription": "TaskFlow is a modern project management tool built for agile teams. Features drag-and-drop Kanban boards, real-time collaboration via WebSockets, sprint planning with velocity tracking, and comprehensive reporting dashboards. Built with a focus on performance and developer experience.",
+    "category": "Web App",
+    "techStack": ["Next.js", "React", "TypeScript", "Prisma", "PostgreSQL", "Socket.io", "Tailwind CSS"],
+    "githubUrl": "https://github.com/example/task-flow",
+    "liveUrl": "https://taskflow.example.com",
+    "thumbnail": "/media/projects/task-flow/thumbnail.jpg",
+    "coverImage": "/media/projects/task-flow/cover.jpg",
+    "screenshots": [],
+    "featured": true,
+    "status": "completed",
+    "timeline": "Sep 2025 - Dec 2025",
+    "role": "Full Stack Lead",
+    "teamSize": 4,
+    "features": [
+      "Real-time Kanban board with optimistic UI updates",
+      "Sprint velocity charts and burndown tracking",
+      "Team member workload heatmaps",
+      "Automated Slack and email notifications"
+    ],
+    "architectureHighlights": [
+      "Event-driven architecture with Socket.io for real-time sync",
+      "Prisma middleware for audit logging on all mutations",
+      "Redis caching layer for dashboard analytics queries"
+    ],
+    "challenges": [
+      "Handling conflict resolution for concurrent board edits",
+      "Optimizing WebSocket connection scaling for 500+ concurrent users"
+    ],
+    "solutions": [
+      "Implemented operational transformation for board state",
+      "Used Redis Pub/Sub with connection pooling for horizontal scaling"
+    ],
+    "results": [
+      "Reduced task management overhead by 40% for beta teams",
+      "Achieved <100ms latency for real-time updates at scale"
+    ],
+    "tags": ["productivity", "real-time", "fullstack", "collaboration"],
+    "reelSlides": [
+      {
+        "id": "task-flow-slide-1",
+        "projectId": "task-flow",
+        "title": "Kanban Board Overview",
+        "description": "Drag-and-drop task management with real-time team collaboration.",
+        "image": "/media/projects/task-flow/reel/slide-1.jpg",
+        "order": 0
+      },
+      {
+        "id": "task-flow-slide-2",
+        "projectId": "task-flow",
+        "title": "Analytics Dashboard",
+        "description": "Sprint velocity, burndown charts, and team performance metrics.",
+        "image": "/media/projects/task-flow/reel/slide-2.jpg",
+        "order": 1
+      }
+    ],
+    "reels": [
+      {
+        "id": "task-flow-overview",
+        "projectId": "task-flow",
+        "title": "Product Walkthrough",
+        "description": "From board creation to sprint completion.",
+        "order": 0,
+        "slides": [
+          {
+            "id": "task-flow-slide-1",
+            "projectId": "task-flow",
+            "title": "Kanban Board Overview",
+            "description": "Drag-and-drop task management with real-time team collaboration.",
+            "image": "/media/projects/task-flow/reel/slide-1.jpg",
+            "order": 0
+          },
+          {
+            "id": "task-flow-slide-2",
+            "projectId": "task-flow",
+            "title": "Analytics Dashboard",
+            "description": "Sprint velocity, burndown charts, and team performance metrics.",
+            "image": "/media/projects/task-flow/reel/slide-2.jpg",
+            "order": 1
+          }
+        ]
+      }
+    ],
+    "displayOrder": 4,
+    "platform": "web",
+    "createdAt": "2025-12-01T12:00:00+00:00",
+    "updatedAt": "2025-12-01T12:00:00+00:00"
+  },
+  {
+    "id": "dev-metrics",
+    "slug": "dev-metrics",
+    "title": "DevMetrics CLI",
+    "shortDescription": "A command-line tool for analyzing codebase health and team productivity metrics.",
+    "fullDescription": "DevMetrics is an open-source CLI tool that provides actionable insights into codebase health, team velocity, and code quality trends. It integrates with GitHub, GitLab, and local git repositories to generate comprehensive reports on commit patterns, review times, hotspot detection, and technical debt accumulation.",
+    "category": "Developer Tool",
+    "techStack": ["TypeScript", "Node.js", "Commander.js", "Inquirer", "Chart.js", "Octokit"],
+    "githubUrl": "https://github.com/example/dev-metrics",
+    "liveUrl": "https://npmjs.com/package/dev-metrics",
+    "thumbnail": "/media/projects/dev-metrics/thumbnail.jpg",
+    "coverImage": "/media/projects/dev-metrics/cover.jpg",
+    "screenshots": [],
+    "featured": false,
+    "status": "completed",
+    "timeline": "Jul 2025 - Sep 2025",
+    "role": "Sole Developer",
+    "teamSize": 1,
+    "features": [
+      "Multi-repository analysis with parallel processing",
+      "Interactive terminal UI with progress indicators",
+      "Exportable reports in JSON, HTML, and PDF formats",
+      "GitHub Actions integration for CI/CD pipelines"
+    ],
+    "architectureHighlights": [
+      "Streaming parser for large git histories without memory bloat",
+      "Plugin architecture for custom metric collectors",
+      "Worker thread pool for CPU-intensive analysis tasks"
+    ],
+    "challenges": [
+      "Processing 100k+ commit histories within reasonable time",
+      "Handling API rate limits across multiple Git providers"
+    ],
+    "solutions": [
+      "Implemented incremental caching with content-addressable storage",
+      "Built adaptive rate limiter with exponential backoff"
+    ],
+    "results": [
+      "Analyzes 50k commits in under 30 seconds",
+      "1.2k+ stars on GitHub within first month of release"
+    ],
+    "tags": ["cli", "developer-tools", "analytics", "opensource"],
+    "reelSlides": [
+      {
+        "id": "dev-metrics-slide-1",
+        "projectId": "dev-metrics",
+        "title": "Interactive Terminal Dashboard",
+        "description": "Real-time code health visualization in your terminal.",
+        "image": "/media/projects/dev-metrics/reel/slide-1.jpg",
+        "order": 0
+      },
+      {
+        "id": "dev-metrics-slide-2",
+        "projectId": "dev-metrics",
+        "title": "Team Productivity Report",
+        "description": "Comprehensive HTML reports with charts and trend analysis.",
+        "image": "/media/projects/dev-metrics/reel/slide-2.jpg",
+        "order": 1
+      }
+    ],
+    "reels": [
+      {
+        "id": "dev-metrics-walkthrough",
+        "projectId": "dev-metrics",
+        "title": "Getting Started",
+        "description": "Installation, configuration, and first analysis run.",
+        "order": 0,
+        "slides": [
+          {
+            "id": "dev-metrics-slide-1",
+            "projectId": "dev-metrics",
+            "title": "Interactive Terminal Dashboard",
+            "description": "Real-time code health visualization in your terminal.",
+            "image": "/media/projects/dev-metrics/reel/slide-1.jpg",
+            "order": 0
+          },
+          {
+            "id": "dev-metrics-slide-2",
+            "projectId": "dev-metrics",
+            "title": "Team Productivity Report",
+            "description": "Comprehensive HTML reports with charts and trend analysis.",
+            "image": "/media/projects/dev-metrics/reel/slide-2.jpg",
+            "order": 1
+          }
+        ]
+      }
+    ],
+    "displayOrder": 5,
+    "platform": "cli",
+    "createdAt": "2025-09-15T12:00:00+00:00",
+    "updatedAt": "2025-09-15T12:00:00+00:00"
+  },
+  {
+    "id": "secure-vault",
+    "slug": "secure-vault",
+    "title": "SecureVault Mobile",
+    "shortDescription": "A zero-knowledge encrypted password manager with biometric authentication.",
+    "fullDescription": "SecureVault is a privacy-first password manager built for iOS and Android. It uses client-side encryption with Argon2id key derivation, secure enclave/keystore integration for biometric unlock, and supports encrypted vault sharing via QR codes. Zero server-side knowledge architecture ensures user data never leaves the device unencrypted.",
+    "category": "Mobile App",
+    "techStack": ["React Native", "Expo", "TypeScript", "SQLCipher", "Expo SecureStore", "React Native Biometrics"],
+    "githubUrl": "https://github.com/example/secure-vault",
+    "liveUrl": "https://securevault.example.com",
+    "thumbnail": "/media/projects/secure-vault/thumbnail.jpg",
+    "coverImage": "/media/projects/secure-vault/cover.jpg",
+    "screenshots": [],
+    "featured": true,
+    "status": "in-progress",
+    "timeline": "Nov 2025 - Present",
+    "role": "Mobile Security Lead",
+    "teamSize": 3,
+    "features": [
+      "Argon2id key derivation with hardware-backed key storage",
+      "Biometric authentication (Face ID, Touch ID, Android Biometric)",
+      "Encrypted vault export/import with QR code sharing",
+      "TOTP authenticator with encrypted backup",
+      "Breach monitoring via HaveIBeenPwned API (local k-anonymity)"
+    ],
+    "architectureHighlights": [
+      "SQLCipher for encrypted local database with per-vault keys",
+      "Keychain/Keystore integration for master key protection",
+      "Offline-first architecture with encrypted sync protocol"
+    ],
+    "challenges": [
+      "Balancing security with usability for non-technical users",
+      "Handling secure element availability across Android OEMs"
+    ],
+    "solutions": [
+      "Designed progressive security onboarding flow",
+      "Implemented fallback software encryption with clear warnings"
+    ],
+    "results": [
+      "Passed independent security audit (Cure53 methodology)",
+      "Beta retention rate 78% after 30 days"
+    ],
+    "tags": ["security", "mobile", "encryption", "privacy"],
+    "reelSlides": [
+      {
+        "id": "secure-vault-slide-1",
+        "projectId": "secure-vault",
+        "title": "Vault Unlock Flow",
+        "description": "Biometric authentication with secure enclave integration.",
+        "image": "/media/projects/secure-vault/reel/slide-1.jpg",
+        "order": 0
+      },
+      {
+        "id": "secure-vault-slide-2",
+        "projectId": "secure-vault",
+        "title": "Encrypted Sharing",
+        "description": "QR code based vault sharing without cloud dependency.",
+        "image": "/media/projects/secure-vault/reel/slide-2.jpg",
+        "order": 1
+      }
+    ],
+    "reels": [
+      {
+        "id": "secure-vault-security",
+        "projectId": "secure-vault",
+        "title": "Security Architecture",
+        "description": "Deep dive into encryption and key management.",
+        "order": 0,
+        "slides": [
+          {
+            "id": "secure-vault-slide-1",
+            "projectId": "secure-vault",
+            "title": "Vault Unlock Flow",
+            "description": "Biometric authentication with secure enclave integration.",
+            "image": "/media/projects/secure-vault/reel/slide-1.jpg",
+            "order": 0
+          },
+          {
+            "id": "secure-vault-slide-2",
+            "projectId": "secure-vault",
+            "title": "Encrypted Sharing",
+            "description": "QR code based vault sharing without cloud dependency.",
+            "image": "/media/projects/secure-vault/reel/slide-2.jpg",
+            "order": 1
+          }
+        ]
+      }
+    ],
+    "displayOrder": 6,
+    "platform": "mobile",
+    "createdAt": "2025-11-01T12:00:00+00:00",
+    "updatedAt": "2025-11-01T12:00:00+00:00"
+  },
+  {
+    "id": "api-gateway",
+    "slug": "api-gateway",
+    "title": "EdgeAPI Gateway",
+    "shortDescription": "A high-performance API gateway with rate limiting, auth, and observability built for edge deployment.",
+    "fullDescription": "EdgeAPI is a lightweight API gateway designed for deployment at the edge (Cloudflare Workers, Vercel Edge, Deno Deploy). Written in TypeScript with zero cold-start overhead, it provides JWT validation, configurable rate limiting, request/response transformation, and OpenTelemetry integration out of the box.",
+    "category": "Infrastructure",
+    "techStack": ["TypeScript", "Hono", "Cloudflare Workers", "OpenTelemetry", "JWT", "Zod"],
+    "githubUrl": "https://github.com/example/edge-api-gateway",
+    "liveUrl": "https://edgeapi.example.com",
+    "thumbnail": "/media/projects/api-gateway/thumbnail.jpg",
+    "coverImage": "/media/projects/api-gateway/cover.jpg",
+    "screenshots": [],
+    "featured": false,
+    "status": "completed",
+    "timeline": "May 2025 - Jul 2025",
+    "role": "Platform Engineer",
+    "teamSize": 2,
+    "features": [
+      "Sub-millisecond cold starts on Cloudflare Workers",
+      "Declarative route configuration with Zod schema validation",
+      "Distributed tracing with OpenTelemetry and Jaeger",
+      "Per-route rate limiting with sliding window algorithm",
+      "JWT/OIDC validation with JWKS caching"
+    ],
+    "architectureHighlights": [
+      "Middleware pipeline optimized for edge runtime constraints",
+      "Streaming request/response body transformation",
+      "Config hot-reload without deployment via KV namespace"
+    ],
+    "challenges": [
+      "Working within 1MB Worker script size limit",
+      "Achieving consistent latency across global edge locations"
+    ],
+    "solutions": [
+      "Tree-shaking and manual bundle optimization",
+      "Regional KV read replicas for config distribution"
+    ],
+    "results": [
+      "P99 latency <5ms at edge locations worldwide",
+      "Processes 10M+ requests/day in production"
+    ],
+    "tags": ["api-gateway", "edge-computing", "performance", "infrastructure"],
+    "reelSlides": [
+      {
+        "id": "api-gateway-slide-1",
+        "projectId": "api-gateway",
+        "title": "Edge Deployment Pipeline",
+        "description": "Zero-config deployment to Cloudflare's global network.",
+        "image": "/media/projects/api-gateway/reel/slide-1.jpg",
+        "order": 0
+      },
+      {
+        "id": "api-gateway-slide-2",
+        "projectId": "api-gateway",
+        "title": "Observability Dashboard",
+        "description": "Real-time traces, metrics, and logs via OpenTelemetry.",
+        "image": "/media/projects/api-gateway/reel/slide-2.jpg",
+        "order": 1
+      }
+    ],
+    "reels": [
+      {
+        "id": "api-gateway-overview",
+        "projectId": "api-gateway",
+        "title": "Architecture Overview",
+        "description": "How EdgeAPI achieves sub-millisecond cold starts.",
+        "order": 0,
+        "slides": [
+          {
+            "id": "api-gateway-slide-1",
+            "projectId": "api-gateway",
+            "title": "Edge Deployment Pipeline",
+            "description": "Zero-config deployment to Cloudflare's global network.",
+            "image": "/media/projects/api-gateway/reel/slide-1.jpg",
+            "order": 0
+          },
+          {
+            "id": "api-gateway-slide-2",
+            "projectId": "api-gateway",
+            "title": "Observability Dashboard",
+            "description": "Real-time traces, metrics, and logs via OpenTelemetry.",
+            "image": "/media/projects/api-gateway/reel/slide-2.jpg",
+            "order": 1
+          }
+        ]
+      }
+    ],
+    "displayOrder": 7,
+    "platform": "other",
+    "createdAt": "2025-07-15T12:00:00+00:00",
+    "updatedAt": "2025-07-15T12:00:00+00:00"
   }
 ]
