@@ -251,11 +251,13 @@ Do not add Redis, PostgreSQL, message broker, Docker orchestration or distribute
 - [ ] GitHub evidence is linked; no automatic merge capability is enabled.
 - [ ] Disposable-repository pilot passes before ApexOS rollout.
 
-## 13. Owner decisions
+## 13. Owner decisions recorded — 18 November 2026
 
-This is a proposal, not an implementation commitment. Owner approval is required for:
-- custom TypeScript controller direction;
-- whether OMA is included in proof of concept;
-- whether LoopForge Local is trialed as a comparison;
-- single-user/local-only v1 boundary;
-- any local installation, permission or configuration changes.
+- [x] Custom TypeScript controller direction approved.
+- [x] OMA selected for disposable proof of concept against custom baseline.
+- [x] V1 is single-user and local-only on the Windows workstation.
+- [x] LoopForge deferred; no parallel product trial in this phase.
+- [ ] Production adoption of OMA remains undecided pending proof-of-concept results.
+- [ ] Any global configuration, permission or ApexOS rollout change requires separate owner approval.
+
+The POC must run in a disposable temporary project, not the ApexOS repository working tree. See OMA_POC_RUNBOOK.md.
