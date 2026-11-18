@@ -1,34 +1,80 @@
-# KNOWN ISSUES & WORKAROUNDS
+# Known Issues and Audit Findings
 
-This document records active technical limitations, known issues, and documentation gaps for Phase 3 (App Ecosystem).
+**Last reviewed:** 18 November 2026  
+**Baseline:** `staging` commit `4c2f07f1765013395be01c5d73c50f6d0edf5821`.
 
----
+This is a source-review register. Items are findings or risks to verify, not proof that an exploit or runtime failure has occurred. Track fixes and evidence in [Task Board](TASK_BOARD.md).
 
-## 1. Technical & Runtime Limitations
+## High priority
 
-### 1.1 Browser App Iframe Constraints
+### K-01 — Inconsistent or unverified portfolio facts
 
-- **Issue**: Custom iframe-based `Browser App` may fail to render certain external websites (e.g. GitHub, LinkedIn, Google) due to strict `X-Frame-Options: DENY` or `Content-Security-Policy: frame-ancestors` headers on their servers.
-- **Workaround**: For blocked sites, the Browser App should fall back to rendering a neat dialog with a click-through external link (opening in a new browser window/tab), clearly informing the user that the site restricts iframe embeds.
+Several content modules and app views contain differing or apparently sample biography, location, employment, education, certification and achievement details. These claims cannot be treated as verified profile facts from repository source alone.
 
-### 1.2 Multi-Window Focus Management
+**Action:** obtain owner approval for the canonical profile dataset; align all apps and remove unapproved claims.
 
-- **Issue**: When multiple windows are overlapped, clicking inside an iframe window does not always bubble up to trigger the OS window focus handler, causing the iframe to capture input without raising its parent window index.
-- **Workaround**: Place a transparent overlay wrapper on top of the iframe window that is active when the window is unfocused, intercepting the first click to focus the window, then disappearing to allow direct iframe interaction once focused.
+### K-02 — Browser iframe message trust boundary
 
-### 1.3 Mobil/Tablet Layout Adaptations
+The Browser app has a `postMessage` handler for messages with a recognized type. The audit did not establish a complete sender-origin/source allowlist in the inspected handler.
 
-- **Issue**: Drag-to-resize window behaviors are only appropriate for Desktop shell. In Mobile and Tablet mode, draggable windows are too difficult to navigate.
-- **Workaround**: The Window Manager locks window dimensions to full-screen or predefined docked layouts in Mobile/Tablet shells, ignoring individual app `defaultSize` overrides.
+**Risk:** messages from untrusted embedded pages may be able to trigger parent-side behavior if the handler does not validate sender identity and payload shape.
 
----
+**Action:** inspect the complete handler contract, validate `origin`, `source` and schema, and test rejected messages. Do not assume the iframe sandbox alone makes parent message handling safe.
 
-## 2. Active Documentation & Data Gaps
+### K-03 — Window manager state invariants
 
-### 2.1 Missing Structured Data Files
+`openWindow` appends a window without checking whether its ID already exists. `listWindows` returns the internal array reference, while its readonly type only constrains TypeScript callers.
 
-- The `src/data/skills.ts` and `src/data/achievements.ts` datasets are planned but not yet implemented. They must be created with typescript interfaces matching [PHASE_3_ARCHITECTURE.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PHASE_3_ARCHITECTURE.md) before their respective applications are registered.
+**Action:** define duplicate-ID behavior, return defensive snapshots, and test focus/minimize/maximize/close invariants.
 
-### 2.2 Desktop Right-Click Handler
+## Medium priority
 
-- Custom right-click context menus on desktop wallpaper and taskbar are stubbed out. High-fidelity actions (refresh, display settings, launch settings) are not wired up to core routines.
+### K-04 — Persisted settings are not fully runtime-validated
+
+Settings loading parses localStorage JSON and merges it with defaults without validating each persisted field against a runtime schema.
+
+**Action:** validate, migrate or safely discard invalid persisted values.
+
+### K-05 — Persisted notifications are not item-validated
+
+Notification loading checks that the parsed value is an array but does not validate each notification object.
+
+**Action:** introduce a notification schema and handle malformed/legacy entries safely.
+
+### K-06 — App registry exposes mutable state
+
+`listApps` returns the underlying registry array under a readonly TypeScript return type. `registerApp` prevents duplicate IDs but does not establish a fully immutable public view or validate the full metadata contract.
+
+**Action:** return defensive snapshots and validate registration.
+
+### K-07 — Command palette empty-result navigation
+
+Arrow-key navigation uses modulo arithmetic based on filtered result count. When there are no results, the calculation can produce an invalid selected index.
+
+**Action:** guard empty results and test ArrowUp/ArrowDown/Enter behavior.
+
+### K-08 — Automated test coverage is limited
+
+The inspected test-file search found the project schema test as the only matching test file. This does not prove there are no other test forms, but core stores and interactions lack visible coverage in the reviewed paths.
+
+**Action:** expand unit/component tests and run the configured quality scripts.
+
+## Low priority / product clarity
+
+### K-09 — Simulated OS data may look real
+
+Files, Terminal, network status, device details and recruiter notification content are simulated. Ensure labels and copy do not mislead visitors into believing these are actual host system capabilities or live events.
+
+### K-10 — Contact submission is simulated
+
+The Contact app waits and displays a success state without a verified message-delivery integration.
+
+**Action:** either connect and test a real submission endpoint or clearly present the form as a demo and avoid claiming successful delivery.
+
+### K-11 — Documentation drift and machine-specific links
+
+Older docs disagree on phase status and contain absolute `file:///c:/Users/...` links. Replace machine-specific links with repository-relative links and keep one authoritative status/task queue.
+
+## Verification status
+
+No local install, runtime session, test, lint, typecheck, production build, browser automation or deployed-site check was executed during this audit. Findings should be confirmed during implementation and QA.
