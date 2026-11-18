@@ -59,7 +59,7 @@ export interface RunMetadata {
   /** Environment variables merged at runtime */
   env?: NodeJS.ProcessEnv;
   /** Signal for cancellation/timeout */
-  signal?: globalThis.AbortSignal;
+  signal?: AbortSignal;
 }
 
 // ---------------------------------------------------------------------------
