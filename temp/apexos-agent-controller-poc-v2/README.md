@@ -1,51 +1,49 @@
-# OMA POC v2: Controller Baseline Comparison
-
-## Overview
-
-Proof-of-concept comparing two implementations of an agent invocation workflow:
-- **Minimal Custom TypeScript Controller:** Direct `child_process.spawn` with explicit state management
-- **OMA @open-multi-agent/core 1.24.0:** OMA's documented process backend
+# OMA POC v2 — Process Runner Comparison
 
 ## Purpose
 
-This POC was designed to comparatively evaluate OMA as a framework candidate against a minimal custom controller for the ApexOS engineering workflow. The test matrix covers 15+ dimensions including process reliability, timeout/cancellation, durable approvals, restart recovery, Windows CLI integration, and GitHub permission boundaries.
+This disposable proof of concept compares:
+- a minimal custom Node.js subprocess runner; and
+- an adapter around `@open-multi-agent/core@1.24.0` process execution.
 
-**NOTICE:** Test results must not be generated or claimed until an independent review of the source is completed. Do not execute `npm test` or `vitest run` until the source has been verified.
+It evaluates subprocess invocation, exit status, timeout/cancellation mapping, output redaction, local result persistence and invocation caps. It is **not** a complete multi-agent controller or an autonomous engineering workflow.
 
-## Directory Structure
+## Current scope
 
+The test suite uses Node.js child processes (`process.execPath`) so the core process tests do not depend on Bash, shell scripts, or Unix-only utilities. Tests exercise the adapter classes rather than calling OMA directly.
+
+The JSON store is a local single-process POC store. Atomic replacement reduces partial-write risk but does not provide cross-process locking, a transaction log, or a production-grade audit trail.
+
+## Explicitly not implemented or proven
+
+The following are outside this POC's verified scope and must not be reported as passing:
+- durable human approval pause/resume or stale approval invalidation;
+- restart recovery after forcibly terminating the controller mid-run;
+- Git worktree creation and isolation;
+- invocation of a genuinely separate Claude/Codex reviewer session;
+- Claude/Codex non-interactive task execution or gateway authentication;
+- GitHub issue/PR lifecycle, permission enforcement, or merge protection;
+- reliable descendant-process-tree termination on every Windows configuration.
+
+OMA process execution does not itself provide these controller-level capabilities. They require separate implementation and tests.
+
+## Safety
+
+- Keep this POC in its disposable directory.
+- Do not install or modify global Claude Code, Codex, Copilot, MCP, or shell configuration.
+- Do not put real credentials in test arguments or output.
+- Persisted stdout/stderr is redacted; raw output is deliberately not stored.
+- No automatic GitHub merge is implemented.
+
+## Run on the target Windows workstation
+
+From PowerShell:
+
+```powershell
+Set-Location .\temp\apexos-agent-controller-poc-v2
+npm ci
+npx tsc --noEmit
+npm test
 ```
-apexos-agent-controller-poc-v2/
-├── package.json          # Dependencies: @open-multi-agent/core@1.24.0, vitest, tsx, typescript
-├── tsconfig.json         # TypeScript configuration, ES2022, commonjs
-├── vitest.config.ts      # Vitest configuration, node environment
-├── README.md             # This file
-├── TEST_PLAN.md          # Test plan with coverage mapping
-├── TEST_RESULTS.json     # Schema for machine-readable results (populated after execution)
-├── src/
-│   ├── custom-baseline.ts    # CustomProcessRunner implementation
-│   ├── oma-adapter.ts        # OmaProcessRunner implementation
-│   └── types.ts              # Shared type definitions
-└── test/
-    ├── custom-baseline.test.ts    # Test suite for custom baseline
-    └── oma-adapter.test.ts        # Test suite for OMA adapter
-```
 
-## Key Differences from v1
-
-1. **Proper Vitest project** — `npm test` runs a real test suite, not a standalone script
-2. **Equivalent test scenarios** — both implementations run the exact same assertions
-3. **No simulated capabilities** — no fabricated JSON; actual process execution and verification
-4. **Proper process termination** — verified via process IDs, not assumption
-5. **Secret redaction verification** — actual assertions that secrets are removed, not present
-6. **Durable approval mechanism** — real approval flow, not hash-comparison-only stubs
-7. **Git worktree isolation** — actual Git worktrees, not ordinary directory comparisons
-8. **Windows CLI integration** — test for Claude Code and Codex CLI availability
-9. **Machine-readable results** — `TEST_RESULTS.json` with schema validation
-
-## Safety Constraints
-
-- Tests run in a disposable workspace only
-- No modifications to ApexOS repository, MCP settings, or global agent configurations
-- No installation of CLIs in the POC environment (CLI integration tested on target Windows workstation)
-- All secrets redacted from persisted state and execution evidence
+Run these commands only after reviewing this branch. Save the actual terminal output and environment details (Node version, npm version, Windows version) with the test evidence. A successful static review or PR merge is not a substitute for running these commands on Windows.
