@@ -1,151 +1,74 @@
-# AGENT GUIDE
+# Agent Guide
 
 ## Purpose
 
-This document is the primary entry point for any AI agent working on My OS Portfolio. It defines the project vision, collaboration rules, workflow expectations, architectural constraints, and the protocol for preserving context across sessions.
+This is the entry point for AI-assisted work in My OS Portfolio (ApexOS). Repository files are the durable source of truth; do not assume previous chat/session context is available.
 
-## Project Vision
+## Product context
 
-My OS Portfolio is a browser-based personal operating system portfolio for Jainil Pandya. It should feel like an interactive OS experience rather than a static website. The system must support mobile, tablet, and desktop modes in one adaptive application, and it should present portfolio content as apps, windows, settings, files, and immersive project reels.
+ApexOS is a browser-based personal operating-system-style portfolio for Jainil Pandya. It adapts across desktop, tablet and mobile shells and presents portfolio content through app-like experiences. It is not a real operating system and must not claim access to a visitor's host files, terminal, hardware or network.
 
-The product must demonstrate:
+The inspected app registry contains 11 applications: About, Projects, Skills, Resume, Contact, Settings, Files, Browser, Gallery, Terminal and Achievements. Core runtime services and features are described in [Architecture Overview](ARCHITECTURE_OVERVIEW.md).
 
-- Frontend engineering skill with Next.js, React, and TypeScript.
-- UX and product thinking through an OS-like interface.
-- A scalable foundation for future AI-assisted development.
-- A distinctive, memorable portfolio experience.
+## Session start
 
-## How to Use This Guide
+Before selecting work:
 
-1. Read `docs/PRODUCT_BLUEPRINT.md` first — this is the single product vision document. It tells you *what* ApexOS should become when finished.
-2. Read `docs/AGENT_GUIDE.md` (this file) second.
-3. Read `docs/TASK_BOARD.md` third.
-4. Read `docs/PROJECT_STATUS.md` fourth.
-5. Read `docs/HANDOFF.md` fifth.
-6. Review the changed files before writing or modifying code.
-7. Update `docs/PROJECT_STATUS.md` after completing major work.
-8. Update `docs/CHANGELOG.md` after major work.
-9. Update `docs/HANDOFF.md` before ending a session.
+1. Read [Task Board](TASK_BOARD.md), [Project Status](PROJECT_STATUS.md), [Handoff](HANDOFF.md) and [Decisions](DECISIONS.md).
+2. Read [Known Issues](KNOWN_ISSUES.md) and [Architecture Overview](ARCHITECTURE_OVERVIEW.md) for relevant risks and boundaries.
+3. Inspect the current branch, latest commit and relevant source files; do not assume docs are perfectly current.
+4. For product/UI work, read the applicable product and design references that exist in this repository, including `PRODUCT_BLUEPRINT.md`, `DESIGN_SYSTEM.md`, `APP_STANDARDS.md`, `PHASE_3_ARCHITECTURE.md`, and relevant app specifications. Confirm their paths before relying on them.
+5. Clarify ambiguous requirements and obtain owner approval for product decisions or high-impact changes.
 
-## Mandatory Reading Order Before Any UI Work
+## Architecture boundaries
 
-**Before implementing any UI or application, every agent MUST read in this order:**
+- `src/app`: Next.js routes and application entry.
+- `src/shells`: desktop, tablet and mobile presentation.
+- `src/apps`: portfolio application UI.
+- `src/features`: cross-app capabilities such as registry, boot, lock screen, reels, command palette and window chrome.
+- `src/core`: platform/runtime services; must not depend on app implementations.
+- `src/shared`: stable, domain-neutral UI, schemas and utilities.
+- `src/data`: static content; validate untrusted or persisted data at boundaries.
+- `src/config`: static configuration.
 
-1. [DESIGN_SYSTEM.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/DESIGN_SYSTEM.md) — Visual source of truth. Screenshots in `docs/design/` are the highest authority.
-2. [PRE_PHASE_3_AUDIT.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PRE_PHASE_3_AUDIT.md) — Current technical and design debt review, layout blockers, and pre-requisites.
-3. [PHASE_3_ARCHITECTURE.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PHASE_3_ARCHITECTURE.md) — Ecosystem scope, layout templates (Layout A/B), and window sizing.
-4. [PROJECTS_APP_ARCHITECTURE.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PROJECTS_APP_ARCHITECTURE.md) — Blueprint for the flagship Projects application, detailing the Reel model and explorer/detail state views.
-5. `docs/PROJECT_STATUS.md` — Current phase progress and implementations list.
-6. `docs/TASK_BOARD.md` — Active task queue and priority execution checklist.
-7. `docs/HANDOFF.md` — Last session context and next recommended tasks.
+Applications may consume core APIs but must not mutate internal core state. Keep dependencies flowing inward toward core/shared primitives; avoid circular or app-specific dependencies in core.
 
-Failure to read [DESIGN_SYSTEM.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/DESIGN_SYSTEM.md) and [PHASE_3_ARCHITECTURE.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PHASE_3_ARCHITECTURE.md) before building UI is a rule violation.
-The design system overrides AI model design instincts and prior conventions.
+## Portfolio content integrity
 
-## Agent Rules
+Never invent or silently alter personal facts. Employment, education, location, certifications, achievements, dates, contact details and experience claims must be confirmed by the owner. Treat sample or conflicting data as unverified until approved. Keep a canonical source for profile facts where practical.
 
-All future AI agents must follow these rules:
+## Simulated experiences
 
-- Always start by reading `docs/AGENT_GUIDE.md`, `docs/TASK_BOARD.md`, `docs/PROJECT_STATUS.md`, and `docs/HANDOFF.md`.
-- Use `docs/TASK_BOARD.md` as the authoritative task queue when selecting next work.
-- Review relevant architecture docs under `docs/` and `docs/architecture/` before changing architecture-related code.
-- Review changed files before applying code changes.
-- Do not assume prior conversation history is available.
-- Keep changes aligned with existing domain boundaries and architecture principles.
-- Update status and changelog after any major work.
-- Update `docs/HANDOFF.md` before stopping or when context is ending.
+Files and Terminal are simulated portfolio applications, not host OS integrations. Device/network indicators are simulated unless explicitly backed by real browser APIs. Contact form success must not imply message delivery unless a real backend is connected and verified.
 
-## Development Workflow
+## Design and UI work
 
-1. Read the current documentation and status.
-2. Inspect the relevant code and schema definitions.
-3. Identify the current phase and the problem being solved.
-4. Plan the next change in a short list of tasks.
-5. Apply code changes in small, safe increments.
-6. Run validation commands when available (e.g. `npm run check`).
-7. Update `docs/PROJECT_STATUS.md`, `docs/CHANGELOG.md`, and `docs/HANDOFF.md`.
+Use approved design references in the repository as the visual source of truth. Prefer existing tokens, shared UI and established layout patterns. Do not invent a replacement design system. If references conflict or are missing, report the conflict and ask for a product decision rather than guessing.
 
-## Architecture Constraints
+## Development workflow
 
-The current repository is organized by domain. Respect these architectural constraints:
+1. Define a task with scope, exclusions and observable acceptance criteria.
+2. Inspect the implementation and related schemas before editing.
+3. Work on a focused branch; keep documentation-only changes separate from source changes.
+4. Do not let multiple agents edit the same working tree or file concurrently.
+5. Implement the smallest coherent change and add/update tests.
+6. Run commands that actually exist in `package.json`; record exact commands and results.
+7. Request independent review from a session/agent that did not implement the change.
+8. Update [Task Board](TASK_BOARD.md), [Project Status](PROJECT_STATUS.md), [Changelog](CHANGELOG.md) and [Handoff](HANDOFF.md) only when supported by actual evidence.
 
-- `src/app` is the delivery boundary and composes providers and route entry points.
-- `src/shells` provides device-specific presentation and interaction.
-- `src/apps` contains independently registered portfolio applications.
-- `src/features` contains cross-app user capabilities.
-- `src/core` owns platform behavior and cannot depend on `src/apps`.
-- `src/shared` contains stable, domain-neutral primitives.
-- `src/config` and `src/data` contain static configuration and validated content.
-- Applications may consume typed core APIs but must not mutate core state directly.
-- Core modules must not import application implementations.
-- Shared code must remain independent of apps, shells, and core domains.
-- The portfolio content path must use Zod schema validation.
-- The repository uses Next.js App Router conventions with a custom OS-like experience.
+## Multi-agent collaboration
 
-## Protected Systems
+See [Multi-Agent Engineering Architecture](agent-system/PROPOSED_ARCHITECTURE.md). It describes a proposed workflow, not an automatically running orchestrator. MCP/tool connectivity alone does not schedule, coordinate or persist separate agent sessions.
 
-The following systems are protected and should be changed only with strong justification:
+## Session handoff
 
-- `src/core`: platform runtime, OS state, window management, notifications.
-- `src/shared`: stable primitives, schemas, utilities, styles.
-- `src/config`: design tokens, site metadata, static configuration.
-- `src/data`: validated content and portfolio data.
-- `src/shells`: device-specific presentation and device adaptation.
+Before pausing or ending substantial work, update [Handoff](HANDOFF.md) with:
 
-## Reels Architecture
+- Branch and commit
+- Work completed and files changed
+- Commands actually run and results
+- Remaining work and blockers
+- Risks and decisions needed from the owner
+- One recommended next task
 
-The portfolio uses a reel-based project content model:
-
-- `src/shared/schemas/project.schema.ts` defines `projectSchema` and `projectReelSchema`.
-- Each project includes `reelSlides`.
-- Each reel is associated with a project via `projectId`.
-- Reels require either an image or a video asset.
-- Reel ordering is enforced through the schema.
-
-Core decisions about reels (see [PROJECTS_APP_ARCHITECTURE.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PROJECTS_APP_ARCHITECTURE.md)):
-
-- One Reel = One Project in the current architecture (v1).
-- Future evolution (v2) supports multiple named reels per project without breaking v1 schema, normalising them through the accessor layer (`src/data/projects/index.ts`).
-
-## Browser Strategy
-
-The current browser strategy is hybrid:
-
-- The site is a Next.js application served through the App Router.
-- It targets desktop, tablet, and mobile as adaptive device modes.
-- The product should feel like an operating system rather than a traditional website.
-- The browser layer is the presentation boundary; runtime OS behavior should live in `src/core` and `src/features`.
-- External links (GitHub, LinkedIn, live sites) must open in the Browser App, not in external tabs, to preserve the OS illusion.
-
-## Future AI / MCP Vision
-
-Future agents should be able to continue development using only repository content and documentation. This repository is setting up a knowledge management system that enables:
-
-- multi-agent collaboration without prior conversation context
-- intentional handoff between sessions
-- documented architectural decisions and workflows
-- safe, rule-guided code changes
-- persistence of project state through docs and changelog entries
-
-## Context Preservation Protocol
-
-When an AI agent believes any of the following is true:
-
-- the context window is becoming full
-- the session is ending
-- token limit may be reached
-- a major change set is complete
-
-Then the agent must update `docs/HANDOFF.md` before continuing or stopping.
-
-`docs/HANDOFF.md` must always include:
-
-- current phase
-- completed work
-- pending work
-- important decisions
-- files modified
-- risks
-- recommended next steps
-
-Failure to update `docs/HANDOFF.md` is not acceptable for session closure.
+Never claim background progress unless a real automation/process exists and has reported evidence.
