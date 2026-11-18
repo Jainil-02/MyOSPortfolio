@@ -24,18 +24,14 @@ See [Architecture Overview](docs/ARCHITECTURE_OVERVIEW.md) for the current sourc
 
 Install dependencies using the package manager and lockfile committed to the repository, then use the scripts defined in `package.json`.
 
-Typical commands:
-
 ```bash
 npm install
 npm run dev
-npm run lint
-npm run typecheck
-npm run test
+npm run check
 npm run build
 ```
 
-Check `package.json` before running a command; script names may change. The documentation audit was read-only and did not execute these commands.
+The `check` script runs Prettier check, ESLint, TypeScript type checking, Vitest and content validation. Individual scripts are also available: `format:check`, `lint`, `typecheck`, `test` and `validate:content`. The documentation audit did not execute these commands.
 
 ## Project documentation
 
