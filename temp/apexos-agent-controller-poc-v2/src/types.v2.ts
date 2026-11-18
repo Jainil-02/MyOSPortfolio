@@ -5,8 +5,6 @@
  * Definitions are kept minimal and focused on process lifecycle management.
  */
 
-import type { AbortSignal } from 'abortcontroller';
-
 // ---------------------------------------------------------------------------
 // RunState — Lifecycle state of a managed process
 // ---------------------------------------------------------------------------
