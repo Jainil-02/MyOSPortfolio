@@ -1,128 +1,84 @@
-# TASK BOARD
+# Task Board
 
 ## Purpose
 
-This document is the authoritative execution queue for My OS Portfolio.
-It is the single source of truth for what is completed, what is in progress, what is blocked, and what should be worked on next.
+This is the authoritative engineering queue for ApexOS. Keep tasks small, evidence-based and linked to a specification, issue or pull request where possible. Do not mark a task complete merely because code exists; define and verify its acceptance criteria.
 
-Every AI agent must read `docs/TASK_BOARD.md` before choosing work and must update it when task statuses change.
+**Baseline:** `staging` commit `4c2f07f1765013395be01c5d73c50f6d0edf5821` (18 November 2026).
 
----
+## Current focus
 
-## Current Phase
-
-**Phase 3: App Ecosystem** — ✅ Complete.
-
-Phase 1 (Foundation), Phase 2 (OS Runtime and Shells), Phase 2.5 (Design System Sync), and Phase 3 (App Ecosystem) are fully complete, audited, and verified. All core ecosystem apps (Files, Browser, Gallery, Terminal, Achievements) are implemented and integrated. We are preparing for Phase 4 (Polish and AI Integration).
-
----
-
-## Status Overview
-
-- **Phase 1 — Foundation**: ✅ Complete. Tooling, schemas, documentation, architecture boundaries, config, and data validation all in place.
-- **Phase 2 — OS Runtime and Shells**: ✅ Complete (100%). All P0/P1 fixes completed: wallpaper/settings integration, lock screen gating via settings, explicit window minimize, unique window IDs, desktop icon sidebar cleanup, tablet/mobile wallpaper support, component-based app execution, global dragging, window chrome layout, notifications, command palette, and maximize positioning fixes.
-- **Phase 2.5 — Design System Governance**: ✅ Complete. Design Architecture Review conducted, [DESIGN_SYSTEM.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/DESIGN_SYSTEM.md) and [DESIGN_REVIEW.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/DESIGN_REVIEW.md) created, agent rules established.
-- **Phase 3 — App Ecosystem**: ✅ Complete (100%). All core recruiter and ecosystem applications (Files, Browser, Gallery, Terminal, Achievements) implemented, registered, and integrated with OS runtime.
-- **Phase 4 — Polish and AI Integration**: 🟡 In progress. Focusing on design consistency, recruiter flow tests, and final polish.
-- **Phase 5 — Future Vision**: 🔴 Not started.
-
----
-
-## Completed Tasks
-
-1. Established multi-agent documentation and rules.
-2. Created `docs/AGENT_GUIDE.md`, `docs/AGENT_RULES.md`, `docs/PROJECT_STATUS.md`, `docs/HANDOFF.md`, `docs/DECISIONS.md`, `docs/CHANGELOG.md`, and `docs/DEVELOPMENT_ROADMAP.md`.
-3. Added `src/features/app-registry` for app metadata discovery.
-4. Added validated project content under `src/data/projects/projects.json` (one sample project entry).
-5. Implemented desktop shell in `src/shells/desktop/index.tsx` with sidebar app launcher and runtime/window-manager integration.
-6. Implemented adaptive shell host in `src/shells/index.tsx` that dispatches to desktop, tablet, or mobile shell.
-7. Enhanced `src/app/apps/projects/page.tsx` to render validated project list with cards, tech stack, features, and links.
-8. Added `src/app/apps/projects/[slug]/page.tsx` for project detail routing, reel slide listing (static), and project navigation.
-9. Added content validation tooling and collection discovery support (`src/data/projects/index.ts`, `src/shared/schemas/*`).
-10. Created `docs/TASK_BOARD.md` as the authoritative execution queue.
-11. Implemented `src/core/os-runtime/index.ts` with runtime state, subscriber pattern, and app activation API.
-12. Implemented `src/core/window-manager/index.ts` with window lifecycle (open, close, focus) and subscription API.
-13. Integrated runtime and window manager into desktop shell with `useSyncExternalStore` and SSR snapshot support.
-14. Fixed TypeScript compilation issues (`exactOptionalPropertyTypes`, Next.js `Route` type).
-15. Fixed project data aggregation to use `process.cwd()` instead of `__dirname` for Turbopack compatibility.
-16. Verified production build passes all TypeScript and build checks.
-17. Extended tablet shell (`src/shells/tablet/index.tsx`) with runtime integration, bottom-dock app launcher, and touch-friendly layout.
-18. Extended mobile shell (`src/shells/mobile/index.tsx`) with runtime integration, bottom-tab launcher, back navigation, safe-area-aware layout, and full-screen content presentation.
-19. Implemented boot sequence (`src/features/boot/index.tsx`) with full-screen overlay, animated loading bar, dark gradient background, and auto-transition to shell via `completeBoot()`. Modified `src/core/os-runtime` to default `booted` to `false` and added `completeBoot()`. Integrated boot screen into `src/shells/index.tsx` via runtime state subscription.
-20. Implemented lock screen (`src/features/lock-screen/index.tsx`): full-screen lock overlay with live-updating clock (12h format), formatted date, dark gradient wallpaper fallback (CSS var `--ls-bg`), fade-in animation, ambient clock glow, pulse unlock hint, and unlock via click/touch/key. Added `locked` state, `unlock()`, and `lock()` to `src/core/os-runtime/index.ts`. Added lock screen gating in `src/shells/index.tsx` (boot → lock → desktop flow).
-21. Implemented wallpaper system (`src/core/wallpaper/index.ts`): core module with subscriber API, `WallpaperConfig` state (type, value, variant), `getWallpaper()`, `setWallpaper()`, `subscribeToWallpaper()`, `resetWallpaper()`. CSS custom property side-effect sets `--wp-bg`, `--wp-type`, `--wp-variant` on `document.documentElement`. Default dark gradient fallback. Lock screen (`src/features/lock-screen`) and desktop shell (`src/shells/desktop`) consume `--wp-bg` CSS var for wallpaper backgrounds.
-22. Rewrote desktop shell (`src/shells/desktop/index.tsx`): replaced sidebar+content layout with proper OS desktop. Full-viewport fixed layout with `--wp-bg` wallpaper background. Left sidebar with app icon grid (40x40 icons + labels, hover/active states). Bottom taskbar with glass effect (`backdrop-filter: blur`), live clock, running-window indicators with focus highlight, system tray placeholder. Content area fills remaining space for app page rendering. Added `TaskbarClock` component with 1s interval, `handleLaunchApp` wrapped in `useCallback` for stable reference.
-23. Implemented window chrome (`src/features/window-chrome/index.tsx`): floating window container component with draggable title bar (app icon + title), macOS-style control buttons, glass-morphism background (`backdrop-filter: blur(16px)`), rounded corners (12px), drop shadow with focus differentiation, position state managed via mouse drag.
-24. Implemented window controls & animations (`src/features/window-chrome/index.tsx`): open (scale-in+fade), close (fade-out+scale), minimize, maximize, and focus dimming transitions.
-25. Implemented desktop icons (`src/shells/desktop/index.tsx`): added `DesktopIcon` component with double-click detection, single-click select, and context menu triggers.
-26. Implemented core settings (`src/core/settings/index.ts`): settings state persistence (wallpaper, variant, theme, lock screen) in localStorage.
-27. Corrected window content architecture pass: component-based window content model, mapping app components dynamically in registry (`src/features/app-registry`) and instantiating them concurrently in the floating window chrome. Implemented About, Projects, and Settings apps. Replaced root page with OS welcome home experience.
-28. **Design System & Governance Established**: Conducted full Design Architecture Review. Analyzed approved screenshots in `docs/design/`. Created `docs/DESIGN_SYSTEM.md` (visual source of truth). Produced `docs/DESIGN_REVIEW.md` (known design issues and recommendations) and [PRE_PHASE_3_AUDIT.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PRE_PHASE_3_AUDIT.md). Established [PHASE_3_ARCHITECTURE.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PHASE_3_ARCHITECTURE.md) and [PROJECTS_APP_ARCHITECTURE.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PROJECTS_APP_ARCHITECTURE.md) as the technical blueprints.
-29. Implemented core notifications (`src/core/notifications/index.ts`): Notification queue, badge API, subscriber API, localStorage persistence, and taskbar tray integration.
-30. Implemented command palette (`src/features/command-palette/index.tsx`): Ctrl+K/Cmd+K overlay with filtered app search, keyboard-driven navigation, and app launch integration.
-31. Set up global fonts and CSS custom variables from Design System Section 11 in `src/app/globals.css`.
-32. Extended `AppMeta` type and app registry config with `defaultSize` and `pinned` status, updating `WindowChrome` sizing logic.
-33. Created shared Layout B primitives `AppSidebar`, `AppContentArea`, and `AppTagBadge` inside `src/shared/ui/`.
-34. Implemented standard-compliant standalone `ReelPlayer` engine in `src/features/reels/index.tsx` supporting autoplay, swipes, and keyboard controls.
-35. Rewrote Projects App with the flagship master-detail Layout B architecture, search filter combination, and named reels player interface.
-36. Configured external link redirection to run inside the Browser App.
-37. Corrected window control button order (Close → Minimize → Maximize) in `src/features/window-chrome/index.tsx`.
-38. Created static resume data in `src/data/resume.ts`.
-39. Rewrote About App to follow Layout A (Profile Dashboard) with direct app launch bindings.
-40. Implemented Resume App as a master-detail Document Viewer with sidebar controls/stats.
-41. Implemented Contact App utility layout with client form validation and direct links.
-42. Conducted visual consistency audit and refactored Settings App typography and custom toggle switch.
-43. Executed Design Convergence Pass: refactored Window Chrome title bar alignments, added native resizers, formatted desktop icon vertical columns, rebuilt taskbar dock, and updated Settings App to Layout B with dynamic accent color selectors.
-44. Upgraded Projects App to V2: Added backward-compatible `architectureHighlights` list to project schema, database, and details UI. Configured multiple named reels for the showcase project. Scoped and auto-focused keydown listeners inside the Reels component, and added list arrow keys, search clear button, and project switching loaders.
-45. Implemented Skills App: Created static skills data under `src/data/skills.ts`, built custom vector icon, and implemented the frontend `SkillsApp` using the Layout B Master-Detail sidebar architecture with category list slide hover animations, active indicators, responsive auto-filling skill cards grid, `AppTagBadge` level tags, and focus-aware keyboard `ArrowUp`/`ArrowDown` category selectors.
-46. Executed UI/UX Convergence Pass: Restored all missing high-fidelity Vector SVG icons (`about.svg`, `projects.svg`, `resume.svg`, `contact.svg`, `settings.svg`), refactored the taskbar center dock to filter out unpinned and non-running applications, wired desktop context menu reload and Settings app launch actions, updated tags, input focus indicators, and success container backgrounds to use adaptive CSS `color-mix` accent-color variables, locked dark mode theme root attributes, and corrected base body background initialization flash.
-
----
-
-## In Progress
-
-- Stage 7: Post-Implementation Polish (Recruiter flow tests, window resize handles, sidebar cleanup).
-
----
-
-## Blocked
-
-- No active technical blockers.
-
----
-
-## Next Actions
-
-> **⚠️ Attention**: Phase 3 apps are now complete. Move to Phase 4 focus areas.
-
-### Phase 4 — Polish and AI Integration
-
-1. **Recruiter Flow Test**: Verify the 3-minute "Boot → Lock → Desktop → About → Projects → Resume" path.
-2. **Window Resize Handles**: Add native resizers to `WindowChrome`.
-3. **Settings App Sidebar Cleanup**: Finalize layout and spacing.
-4. **Taskbar Refinement**: Distinguish between pinned and running indicators.
-5. **AI Assistant Integration**: Implement Phase 4 AI features (stretch).
-
----
+**Audit remediation and release readiness.** The project documents previously marked the app ecosystem complete, while the README and status document described it as in progress. The source registry currently contains 11 apps. This board records that structural fact without asserting that every app has passed runtime acceptance.
 
 ## Backlog
 
-1. Analytics integration (`src/core/analytics`).
-2. Theme system (`src/core/theme` - full dark/light toggle).
-3. Device detection utilities (`src/core/device`, `src/core/search`).
-4. Motion/animation helpers (`src/shared/motion` — currently empty).
-5. App transition animations and window state memory.
-6. Persistent visitor preferences.
-7. Right-click context menus on desktop icons and taskbar.
-8. Notification history panel / notification shade.
-9. Multi-monitor / multi-desktop support (stretch).
-10. AI-driven assistant and content editing features (Phase 4/5).
+### P0 — Owner decisions and content integrity
 
----
+- [ ] Review all profile data in `src/data` and approve the canonical name, location, summary, employment history, education, skills, certifications, achievements and dates.
+- [ ] Identify placeholder/sample content and remove or clearly label it before public release.
+- [ ] Establish a single canonical profile data source; derive About, Resume, Skills, Achievements and Terminal output from it where practical.
+- [ ] Confirm whether Contact is intended to deliver messages; if yes, specify and implement a real backend/provider rather than a simulated success state.
 
-## Usage
+**Acceptance:** every public-facing personal/professional claim is owner-approved and consistent across apps.
 
-- Read this document before starting new work.
-- If a task status changes, update this file immediately.
-- Use this file together with `docs/PROJECT_STATUS.md`, `docs/HANDOFF.md`, and `docs/CHANGELOG.md`.
-- If the task board is stale, stop and refresh it before continuing.
+### P1 — Core correctness and security
+
+- [ ] Harden Browser app `postMessage` handling: validate `event.origin`, `event.source` and message shape against the intended iframe/document contract.
+- [ ] Review iframe sandbox permissions and URL protocols; document the intended threat model and supported browsing behavior.
+- [ ] Enforce unique window IDs in `openWindow`; define behavior for unknown IDs and focus/minimize/maximize transitions.
+- [ ] Return defensive snapshots from window-manager and app-registry APIs so callers cannot mutate internal state.
+- [ ] Add runtime schemas and safe migration/recovery for persisted settings and notifications.
+- [ ] Review event listeners, timers, clipboard access and browser APIs for cleanup and failure handling.
+
+**Acceptance:** invariants are documented and covered by tests; untrusted iframe messages cannot mutate app state outside the intended contract.
+
+### P1 — Automated quality
+
+- [ ] Add unit tests for OS runtime transitions and subscriber behavior.
+- [ ] Add window-manager tests for duplicate IDs, focus exclusivity, minimize/restore, maximize and close.
+- [ ] Add settings and notification tests for valid, malformed, missing and legacy localStorage values.
+- [ ] Add app-registry tests for duplicate registration and immutable read APIs.
+- [ ] Add Browser app tests for URL normalization and message validation.
+- [ ] Add component-level tests for boot/lock flow, command palette empty results and key interactions.
+- [ ] Confirm the actual package scripts and run formatting, lint, typecheck, tests, content validation and production build.
+- [ ] Add or verify GitHub Actions CI for the required checks.
+
+**Acceptance:** commands and results are recorded with the commit/PR; no test/build pass is claimed without execution.
+
+### P2 — UX and accessibility
+
+- [ ] Review all three shells at representative mobile, tablet and desktop breakpoints.
+- [ ] Audit semantic HTML, accessible names, keyboard navigation, focus management and visible focus states.
+- [ ] Verify touch gestures do not conflict with click behavior.
+- [ ] Respect reduced-motion preferences for boot, window and reel animations.
+- [ ] Distinguish simulated OS indicators and data from real device/network status.
+- [ ] Verify download, print and share actions, including failure states.
+
+### P2 — Documentation and workflow
+
+- [x] Reconcile README, project status, task board, architecture overview, known issues and handoff with the audit baseline.
+- [ ] Review agent guide/rules for duplicated or conflicting requirements.
+- [ ] Update the multi-agent architecture to distinguish proposed orchestration from currently available tools.
+- [ ] Define a task/spec/review evidence template and explicit human approval gates.
+- [ ] Remove machine-specific absolute file links from remaining documentation.
+
+## Historical phase record
+
+| Phase | Prior project record | Current audit interpretation |
+|---|---|---|
+| 1 — Foundation | Complete | Historical completion; no re-execution |
+| 2 — OS Runtime and Shells | Complete | Source present; no runtime test |
+| 2.5 — Design Governance | Complete | Historical completion |
+| 3 — App Ecosystem | Complete in status/task board; ~50% in README | Registry has 11 apps; app acceptance not re-verified |
+| 4 — Polish and AI Integration | In progress in older documents | Use remediation backlog above as immediate focus |
+| 5 — Future Vision | Not started | Not assessed |
+
+## Working rules
+
+- One task should have one clear owner, scope, acceptance criteria and verification evidence.
+- Use a dedicated branch and pull request; do not work directly on `main` or `staging`.
+- Keep docs-only changes separate from application implementation.
+- Do not let two agents edit the same working tree or file concurrently.
+- Independent review must be performed by an agent/session that did not implement the change.
+- Escalate ambiguous product decisions to the owner instead of inventing behavior.
+- Update this board only when the task's state has actually changed.
