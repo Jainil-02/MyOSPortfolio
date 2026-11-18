@@ -1,6 +1,6 @@
 # Orchestration Framework Evaluation
 
-> Status: Research and provisional recommendation for owner review; no framework installed and no local configuration changed.
+> Status: Owner-approved direction for proof of concept; no framework installed and no local configuration changed.
 > Research date: 18 November 2026.
 > Scope: Internal ApexOS engineering workflow, not a user-facing product feature.
 
@@ -8,7 +8,7 @@
 
 The requirement is a durable engineering workflow around existing coding tools, not a replacement coding agent. It must preserve separate implementer and reviewer sessions, owner approval, bounded retries, recovery, GitHub evidence, Windows support and TypeScript maintainability.
 
-**Provisional recommendation:** build a narrow, local-first TypeScript controller with deterministic workflow state and explicit CLI adapters for Claude Code and Codex. Evaluate OMA as an optional execution/checkpoint library behind an adapter, rather than assuming it is the complete controller. Run a disposable-repository proof of concept before committing to OMA. Keep LoopForge as the strongest ready-made alternative if the owner prefers adopting a delivery product instead of building a small controller.
+**Owner-approved direction:** build a narrow, local-first, single-user TypeScript controller with deterministic workflow state and explicit CLI adapters for Claude Code and Codex. Use OMA as the selected framework candidate for the disposable proof of concept, comparing it with a minimal custom process/state baseline. OMA is not yet an approved production dependency. LoopForge will not be trialed in this phase; its broader platform and Docker deployment add unnecessary complexity for the local Windows v1.
 
 No candidate has been installed, benchmarked or tested on the user's machine. Upstream documentation is evidence of documented capability, not proof of compatibility with the exact local versions.
 
@@ -156,7 +156,7 @@ Current documentation lists distinct wire formats/endpoints: Claude Code uses An
 | Claude | Existing Claude Code CLI and FreeLLMAPI Anthropic environment |
 | Codex | Existing Codex CLI exec and current provider/sandbox config |
 | Copilot | Inline-only, outside automated reviewer loop |
-| Framework | Evaluate OMA behind an adapter; do not commit before spike |
+| Framework | OMA selected for disposable proof of concept; production dependency decision remains open |
 | Persistence | Local transactional database; select Windows-compatible SQLite driver after dependency spike |
 | GitHub | GitHub remains source of truth; controller stores durable references/evidence |
 | Workspace | Dedicated Git worktree per task/run |
@@ -221,10 +221,17 @@ Official upstream documentation; claims are not yet validated on the user's mach
 
 ## 9. Owner decisions required
 
-- [ ] Approve provisional custom TypeScript controller direction.
-- [ ] Approve OMA as a disposable proof-of-concept candidate, not yet a dependency.
-- [ ] Confirm initial controller is single-user/local on the Windows workstation.
-- [ ] Approve proof-of-concept scope before local installation/configuration changes.
-- [ ] Decide whether to trial LoopForge Local too, or whether OMA-vs-custom is sufficient.
+### Owner decisions recorded — 18 November 2026
 
-Until decisions are made, no controller implementation, framework installation, agent permission change or ApexOS feature work should begin.
+- [x] Custom TypeScript controller approved.
+- [x] OMA approved for a disposable proof of concept against a custom baseline.
+- [x] Initial controller confirmed as single-user and local on the Windows workstation.
+- [x] Assistant may select one candidate; OMA selected. LoopForge is deferred.
+- [ ] Owner approval still required before production adoption, global configuration changes, permission changes or ApexOS rollout.
+
+The proof of concept may install a pinned OMA package only inside a disposable temporary project. It must not modify the ApexOS working tree, global agent configuration, MCP settings or permissions.
+
+
+## 10. Current OMA release note
+
+The upstream release page currently lists @open-multi-agent/core 1.24.0. Pin the exact version in the proof of concept; do not use an unbounded latest dependency. OMA's process backend is suitable for stateless command invocations; ACP or a custom adapter must be evaluated separately for session continuity. See the runbook for acceptance tests.
