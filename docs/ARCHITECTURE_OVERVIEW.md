@@ -1,65 +1,79 @@
-# ARCHITECTURE OVERVIEW
+# Architecture Overview
 
-## Purpose
+## Product boundary
 
-This document summarizes the current repository architecture and the domains that shape the codebase.
+ApexOS is a browser-based portfolio experience styled as a personal operating system. It is not a real operating system and must not imply access to a visitor's local files, hardware, network configuration or terminal.
 
-## Core Domains
+## High-level structure
 
-- `src/app`
-  - Application entry points and route composition.
-  - Hosts providers and the Next.js App Router.
+```text
+src/
+├── app/          Next.js routes, root layout and global styles
+├── shells/       Desktop, tablet and mobile presentation shells
+├── core/         Runtime state and OS-like services
+├── features/     App registry, boot, lock screen, reels, command palette, window chrome
+├── apps/         Portfolio applications
+├── data/         Static portfolio and app content
+├── shared/       Shared schemas, UI and styles
+└── config/       Static application configuration
+```
 
-- `src/shells`
-  - Device-specific presentation for desktop, tablet, and mobile.
-  - Responsible for UI adaptation and interaction patterns.
+## Runtime composition
 
-- `src/apps`
-  - Independently registered portfolio applications.
-  - Intended to house app-specific interfaces like Projects, Gallery, Files, Terminal, Settings, etc.
+- `src/app` provides the Next.js application entry and root layout.
+- `src/shells` selects a desktop, tablet or mobile shell based on viewport width.
+- `src/core/os-runtime` owns boot/lock/active-app runtime state and subscriptions.
+- `src/core/window-manager` owns open-window lifecycle and focus/minimize/maximize state.
+- `src/core/settings` persists user preferences in browser storage.
+- `src/core/notifications` manages notification state and persistence.
+- `src/features/app-registry` maps app IDs and metadata to React components.
+- `src/features/boot` and `src/features/lock-screen` provide startup and unlock presentation.
+- `src/features/command-palette` provides keyboard-driven app discovery and launch.
+- `src/features/reels` renders project/reel slides.
+- `src/apps` contains the registered portfolio app experiences.
+- `src/data` provides static content consumed by apps; `src/shared` contains reusable UI and validation.
 
-- `src/features`
-  - Cross-application capabilities such as app launcher, command palette, lock screen, and reels.
-  - Features may compose apps, runtime systems, and OS behavior.
+## App registry
 
-- `src/core`
-  - Platform runtime behavior, operating-system state, window management, analytics, notifications, and settings.
-  - Core modules are the foundation for app and feature behavior.
+The inspected registry statically imports and registers 11 apps: About, Projects, Skills, Resume, Contact, Settings, Files, Browser, Gallery, Terminal and Achievements. App metadata includes IDs, titles, descriptions, icons, entry paths, default window dimensions and pinned status where supplied.
 
-- `src/shared`
-  - Stable primitives that may be reused across domains.
-  - Includes schema validation, utilities, motion helpers, UI primitives, styles, and testing helpers.
+Static imports make the registry straightforward but eagerly couple the registry module to all app components. Consider lazy loading only if measured bundle size or startup performance justifies the additional complexity.
 
-- `src/config`
-  - Static configuration and design tokens.
-  - Includes site metadata, reserved app IDs, device definitions, and design tokens.
+## State model
 
-- `src/data`
-  - Validated content and static data assets.
-  - Includes portfolio data, filesystem content, wallpapers, and project definitions.
+Core services use module-level state and subscriber sets. React consumers subscribe to these stores. This keeps the OS-like state centralized, but requires explicit invariants, defensive snapshots and tests. The current source review identified mutable-reference exposure in window-manager and app-registry read APIs, and missing runtime validation for persisted settings/notification payloads.
 
-## Dependency Direction
+## Browser application boundary
 
-1. `src/app` composes providers and route entry points.
-2. `src/shells` composes device-specific presentation.
-3. `src/apps` contains independently registered portfolio applications.
-4. `src/features` contains cross-app user capabilities.
-5. `src/core` owns platform behavior and cannot depend on apps.
-6. `src/shared` contains stable, domain-neutral primitives.
-7. `src/config` and `src/data` contain static configuration and validated content.
+The Browser app embeds external content in an iframe with sandbox permissions. Treat iframe content as untrusted. Any message from embedded content that can influence parent application state must validate origin, source and message schema. Revisit sandbox permissions against the minimum required capabilities.
 
-## Current Phase
+## Simulated experiences
 
-The repository is in Foundation Phase. This phase prioritizes contract definition, schema validation, tooling, and architecture documentation. Runtime systems and complete app implementations are deferred.
+Files and Terminal are portfolio simulations, not host OS integrations. Network status and device-like details in Settings are presentation content unless backed by real browser APIs. Contact submission currently presents a simulated completion path; do not describe it as delivering messages until a backend is connected and verified.
 
-## Relevant Files
+## Dependency direction
 
-- `docs/architecture/README.md`
-- `docs/architecture/boundaries.md`
-- `src/shared/schemas/project.schema.ts`
-- `src/config/site.ts`
-- `src/app/layout.tsx`
-- `src/app/page.tsx`
-- `src/apps`
-- `src/core`
-- `src/shells`
+Preferred dependency direction:
+
+```text
+app / shells / apps
+        ↓
+features and shared UI
+        ↓
+core services and shared schemas
+        ↓
+static config / data
+```
+
+Keep core modules independent of app-specific UI. Keep data validation at boundaries where static or persisted content enters the application.
+
+## Quality requirements
+
+- Runtime-validate external and persisted data.
+- Keep state transitions deterministic and testable.
+- Do not expose mutable internal collections.
+- Clean up event listeners, subscriptions and timers.
+- Keep browser-only APIs behind client components/effects or guarded runtime paths.
+- Maintain accessible controls and responsive behavior across shells.
+
+This document describes the source structure observed in the 18 November 2026 audit. It does not certify runtime behavior or replace focused feature specifications.

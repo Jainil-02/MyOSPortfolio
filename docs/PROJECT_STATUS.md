@@ -1,174 +1,66 @@
-# PROJECT STATUS
+# Project Status
 
-## Summary
+**Audit snapshot:** 18 November 2026  
+**Repository:** `Jainil-02/MyOSPortfolio`  
+**Reviewed branch and commit:** `staging` · `4c2f07f1765013395be01c5d73c50f6d0edf5821`  
+**Status type:** read-only source and documentation review; no runtime verification.
 
-This repository is at the boundary between Phase 2 (OS Runtime and Shells) and Phase 3 (App Ecosystem). Phase 1 and Phase 2 are officially fully complete and closed. The core OS runtime and all three device shells are implemented and wired together. The desktop shell behaves like a real operating system, running multiple independent app windows concurrently using a client-side component-driven rendering model.
+## Executive summary
 
-**Design System & Architecture Governance Established**: A full Design Architecture Review was conducted (2026-06-14). All approved screenshots in `docs/design/` were analyzed and a complete design system has been extracted into [DESIGN_SYSTEM.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/DESIGN_SYSTEM.md). This document is the visual source of truth for the entire repository. A design review ([DESIGN_REVIEW.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/DESIGN_REVIEW.md)) documents design strengths, weaknesses, risks, and Phase 3 recommendations.
+ApexOS is a browser-based portfolio presented as an operating-system-style interface. The inspected source tree contains desktop, tablet and mobile shells; core runtime, window, settings and notification modules; boot and lock-screen features; a command palette; a reels player; and 11 registered portfolio applications.
 
-Additionally, to ensure a smooth transition into building applications, the following architecture and audit guides have been established and must be adhered to:
+The existing project documents contained contradictory phase descriptions. This document is the current documentation baseline: Phases 1–3 are recorded by the project as implemented, but this audit did not independently execute the application or verify every historical completion claim. Phase 4 should be treated as the next engineering focus: reliability, content correctness, security review, automated coverage and product polish.
 
-- [PRE_PHASE_3_AUDIT.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PRE_PHASE_3_AUDIT.md) — Evaluation of codebase readiness, technical/design debt, and Go/No-Go assessment.
-- [PHASE_3_ARCHITECTURE.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PHASE_3_ARCHITECTURE.md) — Comprehensive architecture plan, dependency graph, shared UI layout guidelines (Layout A/B), and app window sizing specifications.
-- [PROJECTS_APP_ARCHITECTURE.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PROJECTS_APP_ARCHITECTURE.md) — Precise blueprint for the flagship Projects application, including v1/v2 reel schemas and explorer/detail specs.
+## Current phase record
 
-**Future development must follow [DESIGN_SYSTEM.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/DESIGN_SYSTEM.md) and [PHASE_3_ARCHITECTURE.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PHASE_3_ARCHITECTURE.md).** Phase 3 will be implemented against the approved visual specification captured in the design screenshots.
+| Phase | Scope | Documentation baseline |
+|---|---|---|
+| 1 | Foundation, tooling, schemas, configuration and initial data | Previously marked complete; not re-run in this audit |
+| 2 | OS runtime and desktop/tablet/mobile shells | Source implementation present; runtime behavior not executed |
+| 2.5 | Design-system governance | Previously marked complete; design artifacts not re-audited in full |
+| 3 | Portfolio app ecosystem | 11 apps appear in the inspected registry; functional completeness not runtime-verified |
+| 4 | Reliability, polish and integration | Recommended current focus; detailed backlog in Task Board |
+| 5 | Future vision / user-facing AI capabilities | Not assessed as implemented |
 
----
+Do not use a precise overall percentage until the task board is decomposed into testable acceptance criteria and verified.
 
-## Phase Progress
+## Source areas inspected
 
-| Phase     | Description                                       | Status         | Completion |
-| --------- | ------------------------------------------------- | -------------- | ---------- |
-| Phase 1   | Foundation (tooling, schemas, docs, config, data) | ✅ Complete    | 100%       |
-| Phase 2   | OS Runtime and Shells                             | ✅ Complete    | 100%       |
-| Phase 2.5 | Design System Governance                          | ✅ Complete    | 100%       |
-| Phase 3   | App Ecosystem                                     | ✅ Complete    | 100%       |
-| Phase 4   | Polish and AI Integration                           | 🟡 In progress | 10%        |
-| Phase 5   | Future Vision                                     | 🔴 Not started | 0%         |
+- Application entry: `src/app`
+- Shell host and device shells: `src/shells`
+- Core services: `src/core/os-runtime`, `src/core/window-manager`, `src/core/settings`, `src/core/notifications`
+- Features: app registry, boot, lock screen, command palette, reels and window chrome
+- Applications: About, Projects, Skills, Resume, Contact, Settings, Files, Browser, Gallery, Terminal and Achievements
+- Data and schemas: selected `src/data` modules and project schema/test
+- Project documentation, package scripts and validation tooling
 
-**Overall progress: 82%**
+This is a source inspection, not a complete line-by-line security audit.
 
-> Note: Phase 2 is fully complete. Design System Governance pass completed. Phase 3 (App Ecosystem) is now **Complete** with all 5 core ecosystem apps (Files, Browser, Gallery, Terminal, Achievements) implemented, registered, and integrated. Phase 4 is now in progress focusing on recifier polish.
+## Verified structural observations
 
----
+- The app registry statically imports 11 application components.
+- The OS runtime, window manager, settings and notifications use module-level state and subscriber APIs.
+- Settings and notifications hydrate persisted data from browser storage.
+- The browser application renders external pages in a sandboxed iframe and supports multiple tabs.
+- Reels has a slide player with keyboard and touch navigation.
+- Contact submission currently uses a simulated delay/success path rather than a verified delivery backend.
+- Files and Terminal are explicitly simulated portfolio experiences, not interfaces to the visitor's real filesystem or machine.
 
-## What Is Actually Implemented
+## Audit priorities
 
-### Phase 1 — Foundation ✅
+1. **Portfolio data integrity:** multiple content modules and app displays contain conflicting or unverified biography, location, education, employment, certification and achievement details. Owner confirmation is required before publishing these claims.
+2. **Browser boundary:** review the browser app's `postMessage` handling, iframe sandbox policy and URL/navigation rules. Require sender origin and source validation for messages that can affect browser state.
+3. **State invariants:** prevent duplicate window IDs; avoid exposing mutable internal arrays/objects from registry and window-manager APIs.
+4. **Persisted state:** validate settings and notification payloads at runtime and recover safely from malformed or outdated storage.
+5. **Automated tests:** coverage is currently very limited in the inspected tree; add tests for core stores, lifecycle invariants, registry behavior and critical interactions.
+6. **Accessibility and responsive behavior:** verify keyboard focus, semantics, touch behavior, reduced motion and small-screen layouts.
 
-- Next.js App Router scaffold (`src/app/layout.tsx`, `src/app/page.tsx`)
-- ESLint, Prettier, TypeScript, Vitest all configured
-- Zod schema validation for projects and reel slides (`src/shared/schemas/project.schema.ts`)
-- Architecture documentation, boundary rules, and agent guides (`docs/`)
-- Static configuration and app ID constants (`src/config/`)
-- Content validation tooling (`src/data/projects/index.ts`)
-- Three real projects in `src/data/projects/projects.json`
+See [Known Issues](KNOWN_ISSUES.md) for the finding register and [Task Board](TASK_BOARD.md) for the proposed execution order.
 
-### Phase 2 — OS Runtime and Shells ✅
+## Verification limitations
 
-**Implemented:**
+The audit used GitHub source retrieval. It did not install dependencies, run the app, execute tests, run lint/typecheck, produce a production build, or inspect a deployed site. Therefore no claim of passing QA or runtime security certification is made.
 
-- `src/core/os-runtime/index.ts` — runtime state, `setActiveApp`, subscriber pattern, SSR-compatible
-- `src/core/window-manager/index.ts` — window open/close/focus, subscriber pattern
-- `src/shells/desktop/index.tsx` — full OS desktop layout with wallpaper, taskbar, icon sidebar, window surface rendering app components dynamically
-- `src/shells/tablet/index.tsx` — bottom-dock app launcher wired to runtime + window manager
-- `src/shells/mobile/index.tsx` — bottom-tab launcher, back navigation, safe-area layout
-- `src/shells/index.tsx` — adaptive shell host (device dispatch)
-- `src/features/app-registry/index.ts` — app registry linking app IDs to title, entry metadata, default window size, pinned status, and React Components
-- `src/core/notifications/` — notifications system implemented with localStorage persistence and system tray tray popover
-- `src/core/wallpaper/` — wallpaper system implemented and subscribed to settings store updates
-- `src/features/command-palette/` — command palette implemented (Ctrl+K/Cmd+K quick launcher, keyboard navigation, search filtering, app launch integration)
-- `src/features/lock-screen/` — lock screen implemented with clock, date, and unlock triggers
-- `src/core/settings/` — core settings store with appearance, wallpaper, and lock screen toggle persistence
+## Change control
 
-**Deferred / Unimplemented Core Stubs (Phase 4 Backlog):**
-
-- `src/core/analytics/` — empty
-- `src/core/theme/` — empty (accent settings functional, but global dark/light theme toggle deferred)
-- `src/core/device/` — empty
-- `src/core/search/` — empty
-- `src/core/app-registry/` — empty (app registry lives in `src/features` instead)
-- `src/features/app-launcher/` — empty (launcher logic is inlined into each shell)
-- `src/shared/motion/` — empty
-
-**Recently implemented:**
-
-- Component-based window content model — `src/shells/desktop` window rendering looks up registered components from the registry and mounts them concurrently.
-- `src/apps/about/index.tsx` — About application component displaying system/author information.
-- `src/apps/settings/index.tsx` — Settings application component wired to `src/core/settings` enabling wallpaper switches and lock screen preferences.
-- Root page experience (`src/app/page.tsx`) — Welcome dashboard widget offering quick start triggers for the operating system desktop shell.
-- Global style setup — Loaded Google Inter and JetBrains Mono fonts and mapped all design tokens inside `src/app/globals.css`.
-- App registry metadata extension — Extended registry items with `defaultSize` and `pinned` options; updated `WindowChrome` to respect size metadata.
-- Reusable Shared UI Layout Primitives (`src/shared/ui/`) — Implemented `AppSidebar`, `AppContentArea`, and `AppTagBadge` to construct uniform B-Layout interfaces.
-- Standalone Reels Engine (`src/features/reels/index.tsx`) — Created portable slide and video player supporting autoplay, touch swipes, keyboard arrow listeners, and multi-reel tabs.
-- Flagship Projects App (`src/apps/projects/index.tsx`) — Replaced the app boilerplate with a full Layout B implementation. Wires master list with search, filter chips, dynamic count, overview details tab, cover image header, external browser link hooks, and the reels player tab.
-- About App (`src/apps/about/index.tsx`) — Rewritten to follow Layout A profile dashboard, including active project highlight and window launch CTAs.
-- Resume App (`src/apps/resume/index.tsx`) — High-fidelity document viewer matching Layout B, including download PDF triggers and quick metrics.
-- Contact App (`src/apps/contact/index.tsx`) — OS-style utility application with name/email/message validation and direct links.
-- Window Controls — Re-ordered Chrome window control buttons to Close (Red) → Minimize (Yellow) → Maximize (Green).
-- Settings App — Spacing, font tokens, and custom toggle switch alignment.
-- Skills App — Implemented static data layers, Layout B sidebar categories, grid card display with custom hover translations, and focus-aware keyboard navigation.
-
-### Phase 3 — App Ecosystem ✅ (Complete)
-
-**All 5 core ecosystem apps fully implemented, registered, and integrated:**
-
-- `src/apps/files/index.tsx` — 745-line file explorer with sidebar, breadcrumbs, grid/list view, status bar
-- `src/apps/browser/index.tsx` — 593-line tabbed browser with address bar, iframe renderer, keyboard shortcuts
-- `src/apps/gallery/index.tsx` — 443-line image gallery with thumbnail grid and lightbox viewer
-- `src/apps/terminal/index.tsx` — 479-line simulated shell with commands (help, whoami, ls projects, neofetch, open)
-- `src/apps/achievements/index.tsx` — 286-line achievement cards with category filtering
-
-**Registered in app registry (`src/features/app-registry/index.ts`):**
-- Files: `defaultSize { width: 1100, height: 700 }`, `pinned: true`
-- Browser: `defaultSize { width: 1000, height: 700 }`, `pinned: true`
-- Gallery: `defaultSize { width: 900, height: 640 }`, `pinned: true`
-- Terminal: `defaultSize { width: 760, height: 480 }`, `pinned: false`
-- Achievements: `defaultSize { width: 720, height: 560 }`, `pinned: false`
-
----
-
-## Current Focus
-
-Phase 3 — App Ecosystem (Application Construction).
-
-1. **Ecosystem App Implementation**: Build remaining apps in priority order (About App rewrite → Resume App → Contact App → Skills App → Files App → Browser App → Gallery App → Terminal App → Achievements App).
-
----
-
-## Blockers
-
-- No active technical blockers.
-
----
-
-## Notes
-
-The repository structure is sound. All architecture boundaries, dependency directions, and naming conventions are correctly established.
-
----
-
-## Recent Changes
-
-- **UI/UX Convergence Pass (2026-06-27)**: Restored high-fidelity SVG icon assets for About, Projects, Resume, Contact, and Settings apps, resolving broken asset 404/500 rendering bugs. Filtered taskbar launch dock to show only pinned or running apps. Substituted all hardcoded green hex/RGBA accents with CSS `color-mix` functions against `--color-accent` variables, making tags, badges, input focus borders, and submission success banners dynamically adaptive to user setting preferences. Connected desktop context menus to reload page and launch settings. Forced data-theme dark mode and eliminated initial background rendering flashes.
-- **Projects App V2 (Flagship Experience) (2026-06-26)**: Upgraded Projects App to V2. Implemented backward-compatible project schema changes adding `architectureHighlights`, updated database structure inside `projects.json` including multiple reels setup for `apex-os`, built scoped and auto-focused keyboard listeners for the ReelPlayer component to avoid keyboard hijacking when inactive, integrated `ArrowUp`/`ArrowDown` sidebar key selectors, added inside-input search clear button, and styled visual linear gradient bottom blends and dark glass overlays to cover media headers.
-- **Design Convergence Pass (2026-06-14)**: Aligned the OS desktop shell and applications with the approved design system. Updated default wallpaper, relocated window controls to the left and centered window titles, implemented resize handles on draggable windows, aligned desktop icon grid vertically, restructured the bottom taskbar with high-fidelity DeX-like layouts, and refactored the Settings App to Layout B with a custom accent color picker.
-- **Projects App Foundational Architecture (2026-06-14)**: Completed Projects App rewrite inside the desktop shell. Extended Zod schemas for v2 Named Reels and Story Chapters. Built accessor layer supporting prioritized search, categories/tags extraction, sorting, and format normalization. Scaffolds reusable `AppSidebar`, `AppContentArea`, and status `AppTagBadge` elements. Created portable reels engine `ReelPlayer`. Integrated app window sizing and Browser App external opening handlers. Passed all format, lint, typecheck, Zod test, and content validation suites.
-- **Design System Governance & Phase 3 Architecture Plan (2026-06-14)**: Conducted full Design Architecture Review. Analyzed all approved screenshots in `docs/design/`. Created `docs/DESIGN_SYSTEM.md` (visual source of truth). Produced `docs/DESIGN_REVIEW.md` and `docs/PRE_PHASE_3_AUDIT.md` evaluating code design gaps. Established comprehensive `docs/PHASE_3_ARCHITECTURE.md` and `docs/PROJECTS_APP_ARCHITECTURE.md` to serve as blueprints for app implementation. Updated governance guides.
-- Implemented command palette (`src/features/command-palette/index.tsx`): `CommandPalette` component triggered by Ctrl+K / Cmd+K global keyboard shortcut. Full-screen overlay with centered search panel, real-time app filtering by title/description, keyboard-driven navigation (arrow keys, Enter to launch, Escape to close), app launch via runtime `setActiveApp` and window manager `openWindow`/`focusWindow`, and footer hint bar. Wired into `src/shells/desktop/index.tsx` via `useEffect` global keydown listener and conditional rendering.
-- Implemented core notifications (`src/core/notifications/index.ts`): `Notification` type, module-level state with queue, `addNotification()`, `dismissNotification()`, `markAsRead()`, `markAllAsRead()`, `clearAllNotifications()`, `getUnreadCount()`, subscriber API (`subscribeToNotifications`, `getNotifications`). localStorage persistence with `MAX_NOTIFICATIONS` cap. Desktop taskbar integrated with `NotificationTray` component: bell icon with unread badge, click-to-open popover with notification list, mark-all-read, per-notification dismiss, timestamp display.
-- Corrected window content architecture pass: implemented component-based window content model, mapping app components dynamically in registry (`src/features/app-registry`) and instantiating them concurrently in the floating window chrome. Implemented About, Projects, and Settings apps. Replaced root page with OS welcome home experience.
-- Implemented core settings (`src/core/settings/index.ts`): `SettingsState` type with wallpaper, wallpaperVariant, theme, lockScreenEnabled fields. Module-level state with subscriber API (`subscribeToSettings`, `getSettings`, `updateSettings`, `resetSettings`). localStorage persistence (`my-os-portfolio-settings` key) with SSR-safe access. Partial update via `updateSettings()` merges into current state. Exports `ThemeMode` type.
-- Implemented boot sequence (`src/features/boot/index.tsx`): full-screen dark gradient overlay, CSS-animated loading bar, auto-transition after ~2.2s. Modified `src/core/os-runtime` to default `booted` to `false` and added `completeBoot()`. Integrated into `src/shells/index.tsx` — boot screen gates all shell rendering until `booted` is `true`.
-- Implemented lock screen (`src/features/lock-screen/index.tsx`): full-screen lock overlay with live-updating clock, formatted date, dark gradient wallpaper fallback, fade-in and ambient animations, unlock via click/touch/key. Added `locked` state, `unlock()`, `lock()` to `src/core/os-runtime`. Integrated into `src/shells/index.tsx` — boot → lock → desktop flow is fully operational.
-- Implemented wallpaper system (`src/core/wallpaper/index.ts`): subscriber API, `WallpaperConfig` state, `getWallpaper()`, `setWallpaper()`, `subscribeToWallpaper()`, `resetWallpaper()`. CSS variable side-effect sets `--wp-bg`, `--wp-type`, `--wp-variant`. Lock screen and desktop shell consume `--wp-bg`.
-- Rewrote desktop shell (`src/shells/desktop/index.tsx`): replaced sidebar+content layout with full OS desktop. Fixed viewport layout with `--wp-bg` wallpaper, left icon sidebar (app launcher with hover/active states), bottom glass taskbar (`backdrop-filter: blur`, live clock, window indicators, tray placeholder), scrollable content area.
-- Implemented window chrome (`src/features/window-chrome/index.tsx`): floating window container with draggable title bar, macOS-style control buttons (red/yellow/green), glass-morphism background (`backdrop-filter: blur(16px)`), 12px rounded corners, focus-differentiated shadow. Added `minimizeWindow` and `maximizeWindow` to `src/core/window-manager/index.ts`. Desktop shell now renders open windows as floating `WindowChrome` instances with cascaded positioning; focused window receives router content.
-- Implemented window controls & animations: CSS transitions for open (scale-in+fade), close (fade-out+scale), minimize (translateY+scale), maximize (width/height), and focus dimming (opacity 0.85). Taskbar toggles minimize/focus; minimized windows shown dimmed.
-- Implemented desktop icons: `DesktopIcon` component with double-click launch detection, single-click select, click-elsewhere deselect. `DesktopContextMenu` component with positioned popup, placeholder items (Refresh, Paste, Display Settings), dismiss on click-outside/Escape. Icon grid renders behind windows on the desktop surface.
-
----
-
-## Design System Status
-
-- **Design screenshots**: ✅ Captured and stored in `docs/design/`
-- **Design system documented**: ✅ `docs/DESIGN_SYSTEM.md` created (visual source of truth)
-- **Design review completed**: ✅ `docs/DESIGN_REVIEW.md` created (strengths, weaknesses, risks)
-- **Design governance established**: ✅ Agent rules updated (D-1 through D-7)
-- **Phase 3 design prerequisite**: ✅ All agents must read `docs/DESIGN_SYSTEM.md` before any UI work
-
-**Design specification**: ApexOS dark OS aesthetic — glassmorphism windows, Samsung DeX-inspired taskbar, "Deep Slate Waves" wallpaper, Inter typography, teal-green accent (#10b981).
-
-**Approved layouts**:
-
-- Layout A (Profile/Dashboard): About app, Contact app, Achievements, Resume (doc)
-- Layout B (Master-Detail with Sidebar): Files app, Settings app, Projects app, Skills app
-
-**Fixed design issues** (from `docs/DESIGN_REVIEW.md`):
-
-1. ✅ Load Inter font globally (done in globals.css)
-2. ✅ Define CSS custom property tokens in globals.css (done)
-3. ✅ Verify window control button color order (red=close, yellow=minimize, green=maximize) - verified and matched
-4. ✅ Add `defaultSize` to app registry for per-app window sizing (done)
-5. 🟡 Remove empty app stubs from the app registry (pending registry cleanup)
+This status document is maintained alongside the Task Board and Handoff. Update it only when a change is supported by repository evidence, test output or explicit owner confirmation. Keep historical progress notes distinguishable from verified current state.
