@@ -41,8 +41,8 @@ From PowerShell:
 
 ```powershell
 Set-Location .\temp\apexos-agent-controller-poc-v2
-npm ci
-npx tsc --noEmit
+npm install
+npm run typecheck
 npm test
 ```
 
