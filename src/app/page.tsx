@@ -90,18 +90,20 @@ export default function Home() {
               padding: "12px 16px",
               borderRadius: 12,
               border: "none",
-              background: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)",
-              color: "#ffffff",
+              background: "var(--color-accent)",
+              color: "var(--color-text-inverse, #0f172a)",
               fontSize: 14,
               fontWeight: 600,
               cursor: "pointer",
-              boxShadow: "0 4px 12px rgba(37, 99, 235, 0.2)",
-              transition: "transform 0.15s, opacity 0.2s",
+              boxShadow: "0 4px 12px color-mix(in srgb, var(--color-accent) 20%, transparent)",
+              transition: "background var(--duration-fast), transform 0.15s, opacity 0.2s",
             }}
             onMouseEnter={(e) => {
+              e.currentTarget.style.background = "var(--color-accent-hover)";
               e.currentTarget.style.opacity = "0.9";
             }}
             onMouseLeave={(e) => {
+              e.currentTarget.style.background = "var(--color-accent)";
               e.currentTarget.style.opacity = "1";
             }}
           >

@@ -71,6 +71,16 @@ export default function ProjectDetail({
             {project.title.substring(0, 2).toUpperCase()}
           </div>
         )}
+        {/* Premium Overlay & Bottom Blend Gradient */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background:
+              "linear-gradient(to bottom, rgba(10, 15, 26, 0.1) 0%, rgba(10, 15, 26, 0.3) 65%, var(--color-bg-surface) 100%)",
+            pointerEvents: "none",
+          }}
+        />
       </div>
 
       {/* Tab Row (styled based on DESIGN_SYSTEM.md § 9.2 / 6 Navigation) */}

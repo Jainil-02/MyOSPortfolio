@@ -2,6 +2,60 @@
 
 ## Unreleased
 
+### Product Blueprint (2026-06-27)
+
+- **Created `docs/PRODUCT_BLUEPRINT.md`**: New highest-level product specification document. Answers "What should My OS Portfolio become when it is finished?" in full. Covers: Product Vision, Product Principles (P-1 through P-7), complete Recruiter Journey (Boot → Terminal), full Product Map with specs for all 11 apps (About, Projects, Skills, Resume, Contact, Settings, Files, Browser, Gallery, Achievements, Terminal + AI Assistant), Application Relationships diagram, Global UX (windows, animations, notifications, command palette, keyboard shortcuts, context menus, accessibility, error handling), Design Philosophy (Samsung DeX inspiration, glassmorphism discipline, dark-native UI), Content Strategy (projects, resume, certificates, images, downloads, case studies, future blog), all 11 Wow Moments with implementation status, complete Success Criteria checklist, and Phase 4/5 Future Vision.
+- **Updated `docs/AGENT_GUIDE.md`**: Added `PRODUCT_BLUEPRINT.md` as the first document in the agent onboarding reading order.
+- **Updated `docs/AGENT_RULES.md`**: Added `PRODUCT_BLUEPRINT.md` as item 1 in the mandatory session start reading order.
+- **Updated `docs/HANDOFF.md`**: Added `PRODUCT_BLUEPRINT.md` as the first item in the core reference documents for next agent.
+
+### UI/UX Convergence Pass (Production Ready)
+
+- **Vector SVG App Icons**: Generated high-fidelity SVG icon assets for `about.svg`, `projects.svg`, `resume.svg`, `contact.svg`, and `settings.svg` in `public/icons/` to resolve broken image rendering and eliminate 404/500 resource loading errors.
+- **Taskbar Pinned App Filtering**: Refactored center app list in the desktop taskbar to show only pinned applications (`app.pinned === true`) or applications with active open windows, matching desktop shell user expectations.
+- **Adaptive Badges & Search Border Shadows**: Adapted shared UI `AppTagBadge` component and `ProjectsSearch` component focus states to use modern CSS `color-mix` functions against `--color-accent` variables, enabling theme elements to adapt instantly to selected settings theme accents.
+- **Desktop Context Menu Handlers**: Wired context menu items to operational code: clicking "Refresh" reloads the page window, and clicking "Display Settings" launches the Settings App.
+- **Welcome Page Alignment**: Bound "Explore Projects" welcome button layout to the standard system `--color-accent` theme.
+- **Forced Dark OS Mode**: Forced dark mode rendering across all components by injecting the `data-theme="dark"` attribute on the root layout html element, and set the body background to `var(--color-bg-base)` to prevent initial white/gray styling flashes.
+
+### Skills App Ecosystem Launch (Production Ready)
+
+- **Static Skills Data Layer**: Created `src/data/skills.ts` containing categorized skill structures, experience levels, years of experience, and highlights descriptions.
+- **Master-Detail Layout B Sidebar UI**: Constructed client application component `SkillsApp` inside `src/apps/skills/` using the system's sidebar and content panel layout.
+- **Teal SVG Icon**: Created a clean brand-aligned teal square background with a centered white code SVG icon at `/public/icons/skills.svg`.
+- **Custom Hover Transitions**: Designed sliding translateX sidebar animations and card-lifting translateY transition shadow elevations.
+- **Standard Layout Badges**: Styled and rendered skill levels (expert, proficient) using the system-defined shared `<AppTagBadge>` component without arbitrary visual indicators/progress bars.
+- **Focus-Gated Keyboard Categories Selection**: Bound keyboard listeners to categories (`ArrowUp`/`ArrowDown`) restricted strictly to when the Skills window is focused in the OS runtime environment to prevent system keystroke leaks.
+
+### Projects App V2 Flagship Experience (Production Ready)
+
+- **Backward-Compatible Schema Expansion**: Added `architectureHighlights` array field to `projectSchema` with Zod default validation.
+- **Multiple Named Reels (V2 Foundation)**: Extended database structure inside `projects.json` with named `reels` configuration for `apex-os` (containing "Product Overview" and "Engineering Deep Dive" named reels).
+- **Interactive Reels Tab Controls**: Switched to scoped event handlers and container auto-focus in `ReelPlayer` to eliminate global keyboard hijacking when the Projects App is not focused. Renders `ReelSelector` tabs for multi-reel navigation.
+- **Visual Cover Gradient Blending**: Enhanced project header media cover image in `ProjectDetail.tsx` with a bottom linear gradient blend into `--color-bg-surface` background and a dark overlay.
+- **Case Study Typesetting**: Added dedicated `ARCHITECTURE HIGHLIGHTS` render group, cleaned up features/challenges/solutions bullets spacing, and enforced screaming labels.
+- **List Arrow Keyboard Navigation**: Added `ArrowUp`/`ArrowDown` listener in `ProjectsApp` to scroll sidebar selections when focused, and `Escape` to blur/clear searches.
+- **Project Switching Transitions**: Integrated client-side pending loaders with an OS-style spinner overlay during project selections.
+- **Clear Search & Filters**: Rebound the sidebar's escape clearing button to reset both search query and filter chips synchronously.
+- **Interactive Badges**: Added mouse state event transitions (translateY hover lift, background overlays) to shared `AppTagBadge` component.
+
+### Design Convergence Pass (Production Ready)
+
+- **Default Wallpaper Alignment**: Updated `defaultWallpaper` value in `src/core/wallpaper/index.ts` to matches the Deep Slate Waves gradient.
+- **Window Chrome Redesign & Resize**: Relocated traffic light window controls to the left, centered the title/icon, added right-side overflow button, and implemented native mouse drag resizing on all window borders.
+- **Desktop Shell Column Icon Flow**: Aligned desktop icon grid to display in vertical column flow starting top-left.
+- **Taskbar Refinement**: Restyled taskbar with DeX-aligned height (52px), glass blur (20px), system tray status icons (WiFi, Battery), stacked clock dates/times, and center icon app links with active indicator dots.
+- **Settings Layout B Refactor**: Overhauled the Settings App layout using the Master-Detail sidebar architecture, adding accent color swatches with dynamic CSS root variable updates, wallpaper previews, and system specs.
+
+### Phase 3 Flagship Apps Implementation (Production Ready)
+
+- **Window Chrome Controls Alignment**: Reordered title bar control buttons to Close (Red) → Minimize (Yellow) → Maximize (Green) from left to right.
+- **Static Resume Data Layer**: Created `src/data/resume.ts` storing work experience, education, skills, and certifications.
+- **About App Rewrite**: Redesigned to follow Layout A profile dashboard, including active project details and programmatically linked CTAs.
+- **Resume App**: Built master-detail Document Viewer matching Layout B with document statistics and PDF downloading triggers.
+- **Contact App**: Utility form layout with client input validation, success transitions, and quick-action direct links.
+- **Settings App Consistency**: Refactored Settings App spacing, font scaling, and custom switch styling.
+
 ### Phase 3 Projects App Foundational Architecture (Production Ready)
 
 - **Global Typography and Design Tokens**: Imported Google Inter and JetBrains Mono fonts and mapped all CSS design tokens inside `src/app/globals.css`.

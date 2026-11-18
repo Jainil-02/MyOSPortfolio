@@ -13,6 +13,7 @@ export default function ProjectSidebarItem({
   onClick,
 }: ProjectSidebarItemProps) {
   const [imageError, setImageError] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   // Status dot color mapping
   const getStatusColor = (status: Project["status"]) => {
@@ -36,6 +37,8 @@ export default function ProjectSidebarItem({
   return (
     <button
       onClick={onClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       style={{
         display: "flex",
         alignItems: "center",
@@ -44,23 +47,18 @@ export default function ProjectSidebarItem({
         height: 64,
         padding: "8px 12px",
         borderRadius: 8,
-        border: "none",
-        background: isSelected ? "var(--color-bg-sidebar-active)" : "transparent",
+        border: isSelected ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid transparent",
+        background: isSelected
+          ? "var(--color-bg-sidebar-active)"
+          : isHovered
+            ? "var(--color-surface-1)"
+            : "transparent",
         textAlign: "left",
         cursor: "pointer",
-        transition: "all var(--duration-fast)",
+        transition: "all var(--duration-fast) var(--ease-spring)",
         color: isSelected ? "#ffffff" : "var(--color-text-primary)",
         outline: "none",
-      }}
-      onMouseEnter={(e) => {
-        if (!isSelected) {
-          e.currentTarget.style.background = "var(--color-surface-1)";
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (!isSelected) {
-          e.currentTarget.style.background = "transparent";
-        }
+        transform: isHovered && !isSelected ? "translateX(2px)" : "none",
       }}
     >
       {/* Thumbnail */}

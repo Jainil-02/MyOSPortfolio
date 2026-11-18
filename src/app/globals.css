@@ -97,7 +97,7 @@ body {
 }
 
 body {
-  background: var(--color-surface-desktop);
+  background: var(--color-bg-base);
   color: var(--color-text-primary);
   font-family: var(--font-sans), system-ui, sans-serif;
 }

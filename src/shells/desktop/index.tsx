@@ -49,24 +49,62 @@ function TaskbarClock() {
     const id = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(id);
   }, []);
+
+  const formatDate = (date: Date): string => {
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
+  };
+
   return (
-    <span
+    <div
       style={{
-        fontSize: 13,
-        fontWeight: 500,
-        color: "#f1f5f9",
-        whiteSpace: "nowrap",
-        letterSpacing: "0.02em",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-end",
+        justifyContent: "center",
+        lineHeight: 1.15,
       }}
     >
-      {formatClock(now)}
-    </span>
+      <span
+        style={{
+          fontSize: 12,
+          fontWeight: 600,
+          color: "#f1f5f9",
+          whiteSpace: "nowrap",
+        }}
+      >
+        {formatClock(now)}
+      </span>
+      <span
+        style={{
+          fontSize: 10,
+          color: "rgba(255, 255, 255, 0.45)",
+          whiteSpace: "nowrap",
+        }}
+      >
+        {formatDate(now)}
+      </span>
+    </div>
   );
 }
 
 type ContextMenuState = { x: number; y: number } | null;
 
-function DesktopContextMenu({ state, onClose }: { state: ContextMenuState; onClose: () => void }) {
+type DesktopContextMenuProps = {
+  state: ContextMenuState;
+  onClose: () => void;
+  onRefresh: () => void;
+  onDisplaySettings: () => void;
+};
+
+function DesktopContextMenu({
+  state,
+  onClose,
+  onRefresh,
+  onDisplaySettings,
+}: DesktopContextMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -89,6 +127,15 @@ function DesktopContextMenu({ state, onClose }: { state: ContextMenuState; onClo
 
   if (!state) return null;
 
+  const handleItemClick = (item: string) => {
+    onClose();
+    if (item === "Refresh") {
+      onRefresh();
+    } else if (item === "Display Settings") {
+      onDisplaySettings();
+    }
+  };
+
   return (
     <div
       ref={menuRef}
@@ -110,7 +157,7 @@ function DesktopContextMenu({ state, onClose }: { state: ContextMenuState; onClo
         <button
           key={item}
           type="button"
-          onClick={onClose}
+          onClick={() => handleItemClick(item)}
           style={{
             display: "block",
             width: "100%",
@@ -373,26 +420,6 @@ function NotificationTray() {
 
 function DesktopIcon({ app, onLaunch }: { app: AppMeta; onLaunch: (app: AppMeta) => void }) {
   const [selected, setSelected] = useState(false);
-  const clickTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const handleClick = () => {
-    if (clickTimer.current) {
-      clearTimeout(clickTimer.current);
-      clickTimer.current = null;
-      onLaunch(app);
-    } else {
-      setSelected(true);
-      clickTimer.current = setTimeout(() => {
-        clickTimer.current = null;
-      }, 300);
-    }
-  };
-
-  useEffect(() => {
-    return () => {
-      if (clickTimer.current) clearTimeout(clickTimer.current);
-    };
-  }, []);
 
   useEffect(() => {
     if (!selected) return;
@@ -406,7 +433,11 @@ function DesktopIcon({ app, onLaunch }: { app: AppMeta; onLaunch: (app: AppMeta)
       type="button"
       onClick={(e) => {
         e.stopPropagation();
-        handleClick();
+        setSelected(true);
+      }}
+      onDoubleClick={(e) => {
+        e.stopPropagation();
+        onLaunch(app);
       }}
       style={{
         display: "flex",
@@ -487,6 +518,22 @@ export default function DesktopShell({ children }: { children: React.ReactNode }
     [windows, router],
   );
 
+  const handleTaskbarClick = useCallback(
+    (app: AppMeta) => {
+      const existingWindow = windows.find((w) => w.appId === app.id);
+      if (existingWindow) {
+        if (existingWindow.focused && !existingWindow.minimized) {
+          minimizeWindow(existingWindow.id);
+        } else {
+          focusWindow(existingWindow.id);
+        }
+      } else {
+        handleLaunchApp(app);
+      }
+    },
+    [windows, handleLaunchApp],
+  );
+
   const handleDesktopContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
     setContextMenu({ x: e.clientX, y: e.clientY });
@@ -525,13 +572,15 @@ export default function DesktopShell({ children }: { children: React.ReactNode }
           <div
             style={{
               position: "absolute",
-              inset: 0,
+              left: 20,
+              top: 20,
+              bottom: 72,
               display: "flex",
+              flexDirection: "column",
               flexWrap: "wrap",
-              gap: 4,
-              padding: 20,
+              gap: 12,
               alignContent: "flex-start",
-              zIndex: 1,
+              zIndex: 2,
             }}
           >
             {apps.map((app) => (
@@ -540,9 +589,16 @@ export default function DesktopShell({ children }: { children: React.ReactNode }
           </div>
 
           {/* Page content when no windows */}
-          <div style={{ position: "relative", zIndex: 2 }}>
+          <div style={{ position: "relative", zIndex: 1, pointerEvents: "none" }}>
             {windows.length === 0 ? (
-              <div style={{ padding: 24, color: "rgba(241,245,249,0.4)", fontSize: 14 }}>
+              <div
+                style={{
+                  padding: 24,
+                  color: "rgba(241,245,249,0.4)",
+                  fontSize: 14,
+                  pointerEvents: "auto",
+                }}
+              >
                 {children}
               </div>
             ) : null}
@@ -585,80 +641,218 @@ export default function DesktopShell({ children }: { children: React.ReactNode }
       {/* Taskbar */}
       <div
         style={{
-          height: 48,
+          height: 52,
           display: "flex",
           alignItems: "center",
-          padding: "0 12px",
-          background: "rgba(15, 23, 42, 0.85)",
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
+          justifyContent: "space-between",
+          padding: "0 16px",
+          background: "rgba(15, 23, 42, 0.8)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
           borderTop: "1px solid rgba(255,255,255,0.08)",
-          zIndex: 100,
-          gap: 4,
+          zIndex: 1000,
         }}
       >
-        {/* Window indicators */}
-        <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 2, overflow: "hidden" }}>
-          {windows.length === 0 ? (
-            <span style={{ fontSize: 12, color: "rgba(241,245,249,0.4)", marginLeft: 8 }}>
-              No open windows
-            </span>
-          ) : (
-            windows.map((win) => (
-              <button
-                key={win.id}
-                type="button"
-                onClick={() => {
-                  if (win.focused) {
-                    minimizeWindow(win.id);
-                  } else {
-                    focusWindow(win.id);
-                  }
-                }}
-                style={{
-                  padding: "6px 12px",
-                  border: "none",
-                  borderRadius: 6,
-                  background: win.focused
-                    ? "rgba(255,255,255,0.15)"
-                    : win.minimized
-                      ? "rgba(255,255,255,0.05)"
-                      : "transparent",
-                  color: "#f1f5f9",
-                  fontSize: 12,
-                  cursor: "pointer",
-                  whiteSpace: "nowrap",
-                  maxWidth: 160,
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  opacity: win.minimized ? 0.6 : 1,
-                  transition: "background 0.15s, opacity 0.15s",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "rgba(255,255,255,0.1)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = win.focused
-                    ? "rgba(255,255,255,0.15)"
-                    : win.minimized
-                      ? "rgba(255,255,255,0.05)"
-                      : "transparent";
-                }}
-              >
-                {win.title}
-              </button>
-            ))
-          )}
+        {/* Left Section: Grid Toggle + Search */}
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          {/* Grid/Apps Toggle Button */}
+          <button
+            type="button"
+            aria-label="Start Menu"
+            onClick={() => setCommandPaletteOpen(true)}
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 8,
+              border: "none",
+              background: "transparent",
+              color: "#f1f5f9",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 16,
+              transition: "background var(--duration-fast)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "rgba(255,255,255,0.08)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "transparent";
+            }}
+          >
+            ⊞
+          </button>
+          {/* Search Icon Button */}
+          <button
+            type="button"
+            aria-label="Search"
+            onClick={() => setCommandPaletteOpen(true)}
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 8,
+              border: "none",
+              background: "transparent",
+              color: "#f1f5f9",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 16,
+              transition: "background var(--duration-fast)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "rgba(255,255,255,0.08)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "transparent";
+            }}
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </button>
         </div>
 
-        {/* Clock and tray */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        {/* Center Section: Pinned & Running Apps */}
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          {apps
+            .filter((app) => app.pinned || windows.some((w) => w.appId === app.id))
+            .map((app) => {
+              const win = windows.find((w) => w.appId === app.id);
+              const isOpen = !!win;
+              const isFocused = win ? win.focused && !win.minimized : false;
+
+              return (
+                <button
+                  key={app.id}
+                  type="button"
+                  aria-label={app.title}
+                  onClick={() => handleTaskbarClick(app)}
+                  style={{
+                    width: 38,
+                    height: 38,
+                    borderRadius: 8,
+                    border: "none",
+                    background: isFocused ? "rgba(255,255,255,0.12)" : "transparent",
+                    cursor: "pointer",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    position: "relative",
+                    transition: "background var(--duration-fast), transform var(--duration-fast)",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = isFocused
+                      ? "rgba(255,255,255,0.12)"
+                      : "rgba(255,255,255,0.08)";
+                    e.currentTarget.style.transform = "scale(1.08)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = isFocused
+                      ? "rgba(255,255,255,0.12)"
+                      : "transparent";
+                    e.currentTarget.style.transform = "none";
+                  }}
+                >
+                  <img
+                    src={app.icon ?? "/icons/app-default.svg"}
+                    alt={app.title}
+                    width={24}
+                    height={24}
+                    style={{
+                      borderRadius: 5,
+                      pointerEvents: "none",
+                      opacity: win?.minimized ? 0.6 : 1,
+                    }}
+                  />
+                  {isOpen && (
+                    <div
+                      style={{
+                        position: "absolute",
+                        bottom: 3,
+                        width: 4,
+                        height: 4,
+                        borderRadius: "50%",
+                        background: "var(--color-accent)",
+                      }}
+                    />
+                  )}
+                </button>
+              );
+            })}
+        </div>
+
+        {/* Right Section: System Tray & Clock */}
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          {/* System status items (WiFi & Battery placeholders) */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              color: "rgba(255,255,255,0.7)",
+            }}
+          >
+            {/* WiFi */}
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-label="WiFi status connected"
+            >
+              <path d="M5 12.55a11 11 0 0 1 14.08 0" />
+              <path d="M1.42 9a16 16 0 0 1 21.16 0" />
+              <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
+              <line x1="12" y1="20" x2="12.01" y2="20" />
+            </svg>
+            {/* Battery */}
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-label="Battery status charging"
+            >
+              <rect x="1" y="6" width="18" height="12" rx="2" ry="2" />
+              <line x1="23" y1="11" x2="23" y2="13" />
+            </svg>
+          </div>
           <NotificationTray />
           <TaskbarClock />
         </div>
       </div>
 
-      <DesktopContextMenu state={contextMenu} onClose={() => setContextMenu(null)} />
+      <DesktopContextMenu
+        state={contextMenu}
+        onClose={() => setContextMenu(null)}
+        onRefresh={() => window.location.reload()}
+        onDisplaySettings={() => {
+          const settings = apps.find((a) => a.id === "settings");
+          if (settings) handleLaunchApp(settings);
+        }}
+      />
       {commandPaletteOpen && <CommandPalette onClose={() => setCommandPaletteOpen(false)} />}
     </div>
   );

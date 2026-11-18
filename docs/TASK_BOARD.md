@@ -66,12 +66,22 @@ Phase 1 (Foundation) and Phase 2 (OS Runtime and Shells) are fully complete, aud
 34. Implemented standard-compliant standalone `ReelPlayer` engine in `src/features/reels/index.tsx` supporting autoplay, swipes, and keyboard controls.
 35. Rewrote Projects App with the flagship master-detail Layout B architecture, search filter combination, and named reels player interface.
 36. Configured external link redirection to run inside the Browser App.
+37. Corrected window control button order (Close → Minimize → Maximize) in `src/features/window-chrome/index.tsx`.
+38. Created static resume data in `src/data/resume.ts`.
+39. Rewrote About App to follow Layout A (Profile Dashboard) with direct app launch bindings.
+40. Implemented Resume App as a master-detail Document Viewer with sidebar controls/stats.
+41. Implemented Contact App utility layout with client form validation and direct links.
+42. Conducted visual consistency audit and refactored Settings App typography and custom toggle switch.
+43. Executed Design Convergence Pass: refactored Window Chrome title bar alignments, added native resizers, formatted desktop icon vertical columns, rebuilt taskbar dock, and updated Settings App to Layout B with dynamic accent color selectors.
+44. Upgraded Projects App to V2: Added backward-compatible `architectureHighlights` list to project schema, database, and details UI. Configured multiple named reels for the showcase project. Scoped and auto-focused keydown listeners inside the Reels component, and added list arrow keys, search clear button, and project switching loaders.
+45. Implemented Skills App: Created static skills data under `src/data/skills.ts`, built custom vector icon, and implemented the frontend `SkillsApp` using the Layout B Master-Detail sidebar architecture with category list slide hover animations, active indicators, responsive auto-filling skill cards grid, `AppTagBadge` level tags, and focus-aware keyboard `ArrowUp`/`ArrowDown` category selectors.
+46. Executed UI/UX Convergence Pass: Restored all missing high-fidelity Vector SVG icons (`about.svg`, `projects.svg`, `resume.svg`, `contact.svg`, `settings.svg`), refactored the taskbar center dock to filter out unpinned and non-running applications, wired desktop context menu reload and Settings app launch actions, updated tags, input focus indicators, and success container backgrounds to use adaptive CSS `color-mix` accent-color variables, locked dark mode theme root attributes, and corrected base body background initialization flash.
 
 ---
 
 ## In Progress
 
-- None (Phase 3 prerequisites and Projects App foundational architecture completed successfully).
+- None (Projects App V2 completed successfully).
 
 ---
 
@@ -87,16 +97,6 @@ Phase 1 (Foundation) and Phase 2 (OS Runtime and Shells) are fully complete, aud
 
 ### Phase 3 — App Ecosystem (Priority Order)
 
-7. **About App Rewrite**:
-   - Rewrite `src/apps/about/index.tsx` to follow Layout A (Profile + Info Cards), pulling active project details dynamically from the registry/data layer.
-8. **Resume App**:
-   - Create static resume data `src/data/resume.ts`.
-   - Build `src/apps/resume/` as a styled document viewer inside a window.
-9. **Contact App**:
-   - Build `src/apps/contact/` using OS-style inputs, with client-side validation and static form submission (Option B - Web3Forms/Formspree).
-10. **Skills App**:
-    - Create static skills data `src/data/skills.ts`.
-    - Build `src/apps/skills/` following Layout B (categories sidebar + cards grid without progress bars).
 11. **Files App**:
     - Build `src/apps/files/` representing the highest OS-fidelity app, matching `docs/design/file-app.png` layout, folders, and bottom status bar.
 12. **Browser App**:

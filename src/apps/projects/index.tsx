@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useSyncExternalStore } from "react";
 import { getProjects, getAllCategories, searchProjects } from "@data/projects";
+import { subscribeToWindows, listWindows } from "@core/window-manager";
 import ProjectsSidebar from "./explorer/ProjectsSidebar";
 import { ProjectFilter } from "./explorer/ProjectsFilterBar";
 import ProjectDetail from "./detail/ProjectDetail";
@@ -11,6 +12,13 @@ import ProjectReelViewer from "./reel/ProjectReelViewer";
 export default function ProjectsApp() {
   const allProjects = getProjects();
   const categories = useMemo(() => getAllCategories(), []);
+
+  // Window Focus Subscriptions
+  const windows = useSyncExternalStore(subscribeToWindows, listWindows, () => []);
+  const isFocused = useMemo(() => {
+    const win = windows.find((w) => w.appId === "projects");
+    return win ? win.focused && !win.minimized : false;
+  }, [windows]);
 
   // Explorer State
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
@@ -29,6 +37,9 @@ export default function ProjectsApp() {
   // Reel State (Lifted from ReelViewer to persist when switching tabs)
   const [activeReelId, setActiveReelId] = useState<string | null>(null);
   const [activeSlideIndex, setActiveSlideIndex] = useState<number>(0);
+
+  // Transition Loading State
+  const [isPending, setIsPending] = useState(false);
 
   // Filter & Search Combination Logic
   const visibleProjects = useMemo(() => {
@@ -54,16 +65,65 @@ export default function ProjectsApp() {
   }, [selectedProject, visibleProjects]);
 
   const handleSelectProject = (id: string) => {
+    setIsPending(true);
     setSelectedProjectId(id);
     setDetailTab("overview");
     setActiveReelId(null);
     setActiveSlideIndex(0);
+    setTimeout(() => {
+      setIsPending(false);
+    }, 250); // Premium OS micro-delay
   };
 
   const handleClearFilters = () => {
     setActiveFilter({ category: null, status: null, featured: false });
     setSearchQuery("");
   };
+
+  // Keyboard navigation for sidebar list
+  useEffect(() => {
+    if (!isFocused) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (target?.tagName === "INPUT" || target?.tagName === "TEXTAREA") {
+        if (e.key === "Escape") {
+          e.preventDefault();
+          handleClearFilters();
+          target.blur();
+        }
+        return;
+      }
+
+      const currentIndex = visibleProjects.findIndex((p) => p.id === selectedProjectId);
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        if (currentIndex < visibleProjects.length - 1) {
+          const nextProject = visibleProjects[currentIndex + 1];
+          if (nextProject) {
+            handleSelectProject(nextProject.id);
+          }
+        }
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        if (currentIndex > 0) {
+          const prevProject = visibleProjects[currentIndex - 1];
+          if (prevProject) {
+            handleSelectProject(prevProject.id);
+          }
+        }
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        handleClearFilters();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isFocused, visibleProjects, selectedProjectId]);
 
   return (
     <div
@@ -77,6 +137,13 @@ export default function ProjectsApp() {
         overflow: "hidden",
       }}
     >
+      <style>{`
+        @keyframes os-app-spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
+
       {/* Sidebar - Explorer Mode */}
       <ProjectsSidebar
         projects={visibleProjects}
@@ -161,6 +228,34 @@ export default function ProjectsApp() {
           />
         ) : (
           <ProjectEmptyState />
+        )}
+
+        {/* Transition Loading Overlay */}
+        {isPending && (
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "rgba(10, 15, 26, 0.4)",
+              backdropFilter: "blur(2px)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 100,
+              transition: "all var(--duration-fast)",
+            }}
+          >
+            <div
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: "50%",
+                border: "3px solid rgba(255, 255, 255, 0.1)",
+                borderTopColor: "var(--color-accent)",
+                animation: "os-app-spin 0.8s linear infinite",
+              }}
+            />
+          </div>
         )}
       </div>
     </div>

@@ -28,6 +28,7 @@ export default function ProjectsSidebar({
 }: ProjectsSidebarProps) {
   const handleClearSearch = () => {
     onSearchChange("");
+    onFilterChange({ category: null, status: null, featured: false });
   };
 
   return (

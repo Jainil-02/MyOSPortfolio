@@ -23,6 +23,11 @@
       "Custom notifications popover with tray integration",
       "Adaptive device shells (Desktop, Tablet, Mobile)"
     ],
+    "architectureHighlights": [
+      "Window focus stack managed via an index-based subscription store",
+      "Translucent frosted glass styling implemented using CSS custom properties",
+      "Component-based application registration and dynamic runtime mounting"
+    ],
     "challenges": [
       "Enforcing window focus layering and smooth CSS animations concurrently",
       "Supporting Server-Side Rendering (SSR) without hydration mismatch in system settings"
@@ -54,6 +59,50 @@
         "order": 1
       }
     ],
+    "reels": [
+      {
+        "id": "apex-os-overview",
+        "projectId": "apex-os",
+        "title": "Product Overview",
+        "description": "Simulating a complete operating system interface inside the web browser.",
+        "order": 0,
+        "slides": [
+          {
+            "id": "apex-os-slide-1",
+            "projectId": "apex-os",
+            "title": "Introduction to ApexOS",
+            "description": "Simulating a complete operating system interface inside the web browser.",
+            "image": "/media/projects/apex-os/reel/slide-1.jpg",
+            "order": 0
+          },
+          {
+            "id": "apex-os-slide-2",
+            "projectId": "apex-os",
+            "title": "Interactive Windows",
+            "description": "Draggable, stackable, and focus-aware window panels render registered applications.",
+            "image": "/media/projects/apex-os/reel/slide-2.jpg",
+            "order": 1
+          }
+        ]
+      },
+      {
+        "id": "apex-os-engineering",
+        "projectId": "apex-os",
+        "title": "Engineering Deep Dive",
+        "description": "Focus and z-index management details.",
+        "order": 1,
+        "slides": [
+          {
+            "id": "apex-os-slide-3",
+            "projectId": "apex-os",
+            "title": "Focus Stack Management",
+            "description": "System-wide tracking of active window state and dynamic focus z-index re-layering.",
+            "image": "/media/projects/apex-os/reel/slide-2.jpg",
+            "order": 0
+          }
+        ]
+      }
+    ],
     "displayOrder": 1,
     "platform": "web",
     "createdAt": "2026-06-14T12:00:00+00:00",
@@ -80,6 +129,10 @@
       "Offline-first local workout logging with SQLite",
       "Real-time sensor graphs using react-native-reanimated",
       "Social leaderboard feeds with instant sync"
+    ],
+    "architectureHighlights": [
+      "Batched local database write transactions to avoid thread blocking",
+      "Native thread visual animation executing using react-native-reanimated"
     ],
     "challenges": [
       "Frequent SQLite database locking during high-frequency workout GPS logging",
@@ -130,6 +183,10 @@
       "Fast path parsing caches for Zod Object schemas",
       "Drop-in Express and Hono framework middleware loaders",
       "Friendly nested validation error structures output"
+    ],
+    "architectureHighlights": [
+      "Deterministic cache key strings for complex recursive validation trees",
+      "Zero external runtime dependency footprint"
     ],
     "challenges": [
       "Determining cache key signatures for complex Zod Union/Intersection validation trees"

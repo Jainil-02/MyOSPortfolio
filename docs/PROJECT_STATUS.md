@@ -23,13 +23,13 @@ Additionally, to ensure a smooth transition into building applications, the foll
 | Phase 1   | Foundation (tooling, schemas, docs, config, data) | ✅ Complete    | 100%       |
 | Phase 2   | OS Runtime and Shells                             | ✅ Complete    | 100%       |
 | Phase 2.5 | Design System Governance                          | ✅ Complete    | 100%       |
-| Phase 3   | App Ecosystem                                     | 🟡 In progress | 20%        |
+| Phase 3   | App Ecosystem                                     | 🟡 In progress | 60%        |
 | Phase 4   | Polish and AI Integration                         | 🔴 Not started | 0%         |
 | Phase 5   | Future Vision                                     | 🔴 Not started | 0%         |
 
-**Overall progress: ~55%**
+**Overall progress: ~72%**
 
-> Note: Phase 2 is fully complete. Design System Governance pass completed. Phase 3 (App Ecosystem) is actively in progress, with style token setups, app registry extensions, shared Layout B primitives, Reels Player, and the flagship Projects App foundational architecture fully completed.
+> Note: Phase 2 is fully complete. Design System Governance pass completed. Phase 3 (App Ecosystem) is actively in progress, with style token setups, app registry extensions, shared Layout B primitives, Reels Player, Projects App, About App, Resume App, Contact App, Skills App, and UI/UX Convergence Pass fully completed.
 
 ---
 
@@ -83,6 +83,12 @@ Additionally, to ensure a smooth transition into building applications, the foll
 - Reusable Shared UI Layout Primitives (`src/shared/ui/`) — Implemented `AppSidebar`, `AppContentArea`, and `AppTagBadge` to construct uniform B-Layout interfaces.
 - Standalone Reels Engine (`src/features/reels/index.tsx`) — Created portable slide and video player supporting autoplay, touch swipes, keyboard arrow listeners, and multi-reel tabs.
 - Flagship Projects App (`src/apps/projects/index.tsx`) — Replaced the app boilerplate with a full Layout B implementation. Wires master list with search, filter chips, dynamic count, overview details tab, cover image header, external browser link hooks, and the reels player tab.
+- About App (`src/apps/about/index.tsx`) — Rewritten to follow Layout A profile dashboard, including active project highlight and window launch CTAs.
+- Resume App (`src/apps/resume/index.tsx`) — High-fidelity document viewer matching Layout B, including download PDF triggers and quick metrics.
+- Contact App (`src/apps/contact/index.tsx`) — OS-style utility application with name/email/message validation and direct links.
+- Window Controls — Re-ordered Chrome window control buttons to Close (Red) → Minimize (Yellow) → Maximize (Green).
+- Settings App — Spacing, font tokens, and custom toggle switch alignment.
+- Skills App — Implemented static data layers, Layout B sidebar categories, grid card display with custom hover translations, and focus-aware keyboard navigation.
 
 ### Phase 3 — App Ecosystem 🟡 (in progress)
 
@@ -94,13 +100,10 @@ Additionally, to ensure a smooth transition into building applications, the foll
 **Empty stubs (no route pages, no app components - to be implemented in Phase 3):**
 
 - `src/apps/gallery/` — empty
-- `src/apps/contact/` — empty
 - `src/apps/files/` — empty
 - `src/apps/browser/` — empty
 - `src/apps/terminal/` — empty
 - `src/apps/achievements/` — empty
-- `src/apps/resume/` — empty
-- `src/apps/skills/` — empty
 
 ---
 
@@ -126,6 +129,9 @@ The repository structure is sound. All architecture boundaries, dependency direc
 
 ## Recent Changes
 
+- **UI/UX Convergence Pass (2026-06-27)**: Restored high-fidelity SVG icon assets for About, Projects, Resume, Contact, and Settings apps, resolving broken asset 404/500 rendering bugs. Filtered taskbar launch dock to show only pinned or running apps. Substituted all hardcoded green hex/RGBA accents with CSS `color-mix` functions against `--color-accent` variables, making tags, badges, input focus borders, and submission success banners dynamically adaptive to user setting preferences. Connected desktop context menus to reload page and launch settings. Forced data-theme dark mode and eliminated initial background rendering flashes.
+- **Projects App V2 (Flagship Experience) (2026-06-26)**: Upgraded Projects App to V2. Implemented backward-compatible project schema changes adding `architectureHighlights`, updated database structure inside `projects.json` including multiple reels setup for `apex-os`, built scoped and auto-focused keyboard listeners for the ReelPlayer component to avoid keyboard hijacking when inactive, integrated `ArrowUp`/`ArrowDown` sidebar key selectors, added inside-input search clear button, and styled visual linear gradient bottom blends and dark glass overlays to cover media headers.
+- **Design Convergence Pass (2026-06-14)**: Aligned the OS desktop shell and applications with the approved design system. Updated default wallpaper, relocated window controls to the left and centered window titles, implemented resize handles on draggable windows, aligned desktop icon grid vertically, restructured the bottom taskbar with high-fidelity DeX-like layouts, and refactored the Settings App to Layout B with a custom accent color picker.
 - **Projects App Foundational Architecture (2026-06-14)**: Completed Projects App rewrite inside the desktop shell. Extended Zod schemas for v2 Named Reels and Story Chapters. Built accessor layer supporting prioritized search, categories/tags extraction, sorting, and format normalization. Scaffolds reusable `AppSidebar`, `AppContentArea`, and status `AppTagBadge` elements. Created portable reels engine `ReelPlayer`. Integrated app window sizing and Browser App external opening handlers. Passed all format, lint, typecheck, Zod test, and content validation suites.
 - **Design System Governance & Phase 3 Architecture Plan (2026-06-14)**: Conducted full Design Architecture Review. Analyzed all approved screenshots in `docs/design/`. Created `docs/DESIGN_SYSTEM.md` (visual source of truth). Produced `docs/DESIGN_REVIEW.md` and `docs/PRE_PHASE_3_AUDIT.md` evaluating code design gaps. Established comprehensive `docs/PHASE_3_ARCHITECTURE.md` and `docs/PROJECTS_APP_ARCHITECTURE.md` to serve as blueprints for app implementation. Updated governance guides.
 - Implemented command palette (`src/features/command-palette/index.tsx`): `CommandPalette` component triggered by Ctrl+K / Cmd+K global keyboard shortcut. Full-screen overlay with centered search panel, real-time app filtering by title/description, keyboard-driven navigation (arrow keys, Enter to launch, Escape to close), app launch via runtime `setActiveApp` and window manager `openWindow`/`focusWindow`, and footer hint bar. Wired into `src/shells/desktop/index.tsx` via `useEffect` global keydown listener and conditional rendering.
@@ -161,6 +167,6 @@ The repository structure is sound. All architecture boundaries, dependency direc
 
 1. ✅ Load Inter font globally (done in globals.css)
 2. ✅ Define CSS custom property tokens in globals.css (done)
-3. ⚠️ Verify window control button color order (red=close, yellow=minimize, green=maximize) - currently matched
+3. ✅ Verify window control button color order (red=close, yellow=minimize, green=maximize) - verified and matched
 4. ✅ Add `defaultSize` to app registry for per-app window sizing (done)
 5. 🟡 Remove empty app stubs from the app registry (pending registry cleanup)

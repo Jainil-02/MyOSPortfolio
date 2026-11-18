@@ -94,6 +94,7 @@ export default function ProjectDescription({ project }: ProjectDescriptionProps)
 
       {/* Dynamic List Sections */}
       {renderListSection("Key Features", project.features)}
+      {renderListSection("Architecture Highlights", project.architectureHighlights)}
       {renderListSection("Challenges", project.challenges)}
       {renderListSection("Solutions", project.solutions)}
       {renderListSection("Results & Impact", project.results)}

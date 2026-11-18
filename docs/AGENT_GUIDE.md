@@ -17,14 +17,15 @@ The product must demonstrate:
 
 ## How to Use This Guide
 
-1. Read `docs/AGENT_GUIDE.md` first.
-2. Read `docs/TASK_BOARD.md` second.
-3. Read `docs/PROJECT_STATUS.md` third.
-4. Read `docs/HANDOFF.md` fourth.
-5. Review the changed files before writing or modifying code.
-6. Update `docs/PROJECT_STATUS.md` after completing major work.
-7. Update `docs/CHANGELOG.md` after major work.
-8. Update `docs/HANDOFF.md` before ending a session.
+1. Read `docs/PRODUCT_BLUEPRINT.md` first — this is the single product vision document. It tells you *what* ApexOS should become when finished.
+2. Read `docs/AGENT_GUIDE.md` (this file) second.
+3. Read `docs/TASK_BOARD.md` third.
+4. Read `docs/PROJECT_STATUS.md` fourth.
+5. Read `docs/HANDOFF.md` fifth.
+6. Review the changed files before writing or modifying code.
+7. Update `docs/PROJECT_STATUS.md` after completing major work.
+8. Update `docs/CHANGELOG.md` after major work.
+9. Update `docs/HANDOFF.md` before ending a session.
 
 ## Mandatory Reading Order Before Any UI Work
 

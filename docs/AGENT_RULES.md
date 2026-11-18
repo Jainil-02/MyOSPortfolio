@@ -24,22 +24,23 @@ Before making any code changes:
 
 Read in the following order:
 
-1. docs/AGENT_GUIDE.md
-2. docs/TASK_BOARD.md
-3. docs/PROJECT_STATUS.md
-4. docs/HANDOFF.md
-5. docs/DECISIONS.md
-6. [DESIGN_SYSTEM.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/DESIGN_SYSTEM.md)
-7. [PRE_PHASE_3_AUDIT.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PRE_PHASE_3_AUDIT.md)
-8. [PHASE_3_ARCHITECTURE.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PHASE_3_ARCHITECTURE.md)
-9. [PROJECTS_APP_ARCHITECTURE.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PROJECTS_APP_ARCHITECTURE.md)
+1. docs/PRODUCT_BLUEPRINT.md
+2. docs/AGENT_GUIDE.md
+3. docs/TASK_BOARD.md
+4. docs/PROJECT_STATUS.md
+5. docs/HANDOFF.md
+6. docs/DECISIONS.md
+7. [DESIGN_SYSTEM.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/DESIGN_SYSTEM.md)
+8. [PRE_PHASE_3_AUDIT.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PRE_PHASE_3_AUDIT.md)
+9. [PHASE_3_ARCHITECTURE.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PHASE_3_ARCHITECTURE.md)
+10. [PROJECTS_APP_ARCHITECTURE.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PROJECTS_APP_ARCHITECTURE.md)
 
 If additional context is needed:
 
-10. docs/ARCHITECTURE_OVERVIEW.md
-11. docs/ARCHITECTURE_REVIEW.md
-12. docs/DEVELOPMENT_ROADMAP.md
-13. docs/MY_OS_PORTFOLIO_SPEC.md
+11. docs/ARCHITECTURE_OVERVIEW.md
+12. docs/ARCHITECTURE_REVIEW.md
+13. docs/DEVELOPMENT_ROADMAP.md
+14. docs/MY_OS_PORTFOLIO_SPEC.md
 
 ---
 

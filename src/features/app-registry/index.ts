@@ -2,6 +2,9 @@ import type { ComponentType } from "react";
 import AboutApp from "../../apps/about";
 import ProjectsApp from "../../apps/projects";
 import SettingsApp from "../../apps/settings";
+import ResumeApp from "../../apps/resume";
+import ContactApp from "../../apps/contact";
+import SkillsApp from "../../apps/skills";
 
 /**
  * Minimal App Registry (features layer)
@@ -30,7 +33,8 @@ const registry: AppMeta[] = [
     icon: "/icons/about.svg",
     entry: "/",
     component: AboutApp,
-    defaultSize: { width: 640, height: 480 },
+    defaultSize: { width: 720, height: 560 },
+    pinned: true,
   },
   {
     id: "projects",
@@ -41,6 +45,36 @@ const registry: AppMeta[] = [
     component: ProjectsApp,
     defaultSize: { width: 960, height: 640 },
     pinned: true,
+  },
+  {
+    id: "skills",
+    title: "Skills",
+    description: "Technical skills and expertise categories",
+    icon: "/icons/skills.svg",
+    entry: "/",
+    component: SkillsApp,
+    defaultSize: { width: 840, height: 580 },
+    pinned: true,
+  },
+  {
+    id: "resume",
+    title: "Resume",
+    description: "Professional document center",
+    icon: "/icons/resume.svg",
+    entry: "/",
+    component: ResumeApp,
+    defaultSize: { width: 820, height: 720 },
+    pinned: false,
+  },
+  {
+    id: "contact",
+    title: "Contact",
+    description: "Get in touch with Jainil Pandya",
+    icon: "/icons/contact.svg",
+    entry: "/",
+    component: ContactApp,
+    defaultSize: { width: 640, height: 480 },
+    pinned: false,
   },
   {
     id: "settings",

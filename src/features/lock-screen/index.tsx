@@ -13,11 +13,13 @@ function formatTime(date: Date): string {
 }
 
 function formatDate(date: Date): string {
-  return date.toLocaleDateString("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-  });
+  return date
+    .toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+    })
+    .toUpperCase();
 }
 
 export default function LockScreen() {
@@ -54,13 +56,14 @@ export default function LockScreen() {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center",
-        background: "var(--wp-bg, linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%))",
-        color: "#f1f5f9",
-        fontFamily: "system-ui, sans-serif",
+        justifyContent: "space-between",
+        padding: "8vh 24px",
+        color: "var(--color-text-primary, #f1f5f9)",
+        fontFamily: "var(--font-sans), system-ui, sans-serif",
         cursor: "pointer",
         userSelect: "none",
         WebkitUserSelect: "none",
+        overflow: "hidden",
         animation: "my-os-lock-fade-in 0.6s ease-out both",
       }}
       onClick={handleUnlock}
@@ -69,23 +72,45 @@ export default function LockScreen() {
         handleUnlock();
       }}
     >
+      {/* Wallpaper Layer with Blur and Dark Overlay */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background:
+            "var(--wp-bg, linear-gradient(135deg, #0d1b2a 0%, #0a3040 40%, #062030 100%))",
+          filter: "blur(20px)",
+          transform: "scale(1.1)",
+          zIndex: -2,
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: "rgba(10, 15, 26, 0.45)",
+          zIndex: -1,
+        }}
+      />
+
+      {/* Clock & Date Area */}
       <div
         style={{
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          gap: 12,
+          marginTop: "4vh",
+          gap: 8,
           pointerEvents: "none",
         }}
       >
         <div
           style={{
-            fontSize: "clamp(64px, 15vw, 120px)",
-            fontWeight: 250,
-            letterSpacing: "0.04em",
+            fontSize: "clamp(64px, 12vw, 80px)",
+            fontWeight: 300,
+            letterSpacing: "-0.01em",
             lineHeight: 1,
             color: "#ffffff",
-            animation: "my-os-lock-clock-glow 4s ease-in-out infinite",
           }}
         >
           {formatTime(now)}
@@ -93,30 +118,115 @@ export default function LockScreen() {
 
         <div
           style={{
-            fontSize: "clamp(16px, 3vw, 22px)",
-            fontWeight: 400,
-            color: "rgba(241, 245, 249, 0.7)",
-            letterSpacing: "0.02em",
+            fontSize: 14,
+            fontWeight: 500,
+            color: "rgba(255, 255, 255, 0.9)",
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            marginTop: 4,
           }}
         >
           {formatDate(now)}
         </div>
+
+        {/* Recruiter Notification Pill */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            background: "rgba(30, 41, 59, 0.55)",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            borderRadius: 20,
+            padding: "8px 16px",
+            marginTop: 24,
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+            boxShadow: "0 4px 16px rgba(0, 0, 0, 0.15)",
+            animation: "my-os-notification-glow 3s ease-in-out infinite",
+          }}
+        >
+          <div
+            style={{
+              width: 20,
+              height: 20,
+              borderRadius: "50%",
+              background: "var(--color-accent, #10b981)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 11,
+              color: "#ffffff",
+            }}
+          >
+            ✉
+          </div>
+          <span
+            style={{
+              fontSize: 13,
+              fontWeight: 500,
+              color: "rgba(255, 255, 255, 0.95)",
+              letterSpacing: "0.01em",
+            }}
+          >
+            2 new messages from Recruiters
+          </span>
+        </div>
       </div>
 
+      {/* Footer Unlock Button */}
       <div
         style={{
-          position: "absolute",
-          bottom: "clamp(40px, 8vh, 80px)",
-          fontSize: "clamp(13px, 2vw, 15px)",
-          fontWeight: 300,
-          color: "rgba(241, 245, 249, 0.4)",
-          letterSpacing: "0.12em",
-          textTransform: "uppercase",
-          pointerEvents: "none",
-          animation: "my-os-lock-pulse 2.4s ease-in-out infinite",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 16,
+          marginBottom: "2vh",
         }}
       >
-        Tap anywhere to unlock
+        <button
+          type="button"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            background: "rgba(255, 255, 255, 0.15)",
+            border: "1px solid rgba(255, 255, 255, 0.2)",
+            borderRadius: 24,
+            padding: "10px 24px",
+            fontSize: 13,
+            fontWeight: 600,
+            color: "#ffffff",
+            cursor: "pointer",
+            backdropFilter: "blur(8px)",
+            WebkitBackdropFilter: "blur(8px)",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+            transition: "background 0.2s, transform 0.2s",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "rgba(255, 255, 255, 0.22)";
+            e.currentTarget.style.transform = "scale(1.03)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "rgba(255, 255, 255, 0.15)";
+            e.currentTarget.style.transform = "none";
+          }}
+        >
+          <span>🔒</span> Unlock Device
+        </button>
+
+        <div
+          style={{
+            fontSize: 12,
+            fontWeight: 400,
+            color: "rgba(255, 255, 255, 0.35)",
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            animation: "my-os-lock-pulse 2.4s ease-in-out infinite",
+          }}
+        >
+          Press Enter or space to unlock
+        </div>
       </div>
 
       <style>{`
@@ -125,14 +235,20 @@ export default function LockScreen() {
           to   { opacity: 1; }
         }
 
-        @keyframes my-os-lock-clock-glow {
-          0%, 100% { opacity: 1; }
-          50%      { opacity: 0.85; }
-        }
-
         @keyframes my-os-lock-pulse {
           0%, 100% { opacity: 0.35; }
-          50%      { opacity: 0.6; }
+          50%      { opacity: 0.7; }
+        }
+
+        @keyframes my-os-notification-glow {
+          0%, 100% {
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+          }
+          50% {
+            border-color: rgba(16, 185, 129, 0.3);
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15);
+          }
         }
       `}</style>
     </div>

@@ -13,29 +13,30 @@ Phase 3 delivers the full application ecosystem for ApexOS. Every app listed bel
 
 ### Applications in Scope
 
-| App ID         | Status                  | Recruiter Priority |
-| -------------- | ----------------------- | ------------------ |
-| `about`        | ⚠️ Stub (needs rewrite) | 🔴 CRITICAL        |
-| `projects`     | ⚠️ Stub (needs rewrite) | 🔴 CRITICAL        |
-| `resume`       | 🔴 Empty stub           | 🔴 CRITICAL        |
-| `contact`      | 🔴 Empty stub           | 🔴 CRITICAL        |
-| `skills`       | 🔴 Empty stub           | 🟡 HIGH            |
-| `files`        | 🔴 Empty stub           | 🟡 HIGH            |
-| `browser`      | 🔴 Empty stub           | 🟡 HIGH            |
-| `gallery`      | 🔴 Empty stub           | 🟢 MEDIUM          |
-| `terminal`     | 🔴 Empty stub           | 🟢 MEDIUM          |
-| `achievements` | 🔴 Empty stub           | 🟢 MEDIUM          |
+| App ID         | Status        | Recruiter Priority |
+| -------------- | ------------- | ------------------ |
+| `about`        | ✅ Completed  | 🔴 CRITICAL        |
+| `projects`     | ✅ Completed  | 🔴 CRITICAL        |
+| `resume`       | ✅ Completed  | 🔴 CRITICAL        |
+| `contact`      | ✅ Completed  | 🔴 CRITICAL        |
+| `settings`     | ✅ Completed  | 🔴 CRITICAL        |
+| `skills`       | 🔴 Empty stub | 🟡 HIGH            |
+| `files`        | 🔴 Empty stub | 🟡 HIGH            |
+| `browser`      | 🔴 Empty stub | 🟡 HIGH            |
+| `gallery`      | 🔴 Empty stub | 🟢 MEDIUM          |
+| `terminal`     | 🔴 Empty stub | 🟢 MEDIUM          |
+| `achievements` | 🔴 Empty stub | 🟢 MEDIUM          |
 
 ### Pre-Phase-3 Infrastructure Work (Blocking)
 
-Before any app can be built, these infrastructure fixes MUST be completed in order:
+All infrastructure prerequisites are **fully complete**:
 
-1. **Load Inter font** — Add to `src/app/globals.css`. Required before first visual.
-2. **Define all CSS custom property tokens** — `src/app/globals.css` must declare every token from `DESIGN_SYSTEM.md § 11`.
-3. **Fix window control button order** — `src/features/window-chrome/index.tsx`: red=Close (left), yellow=Minimize (center), green=Maximize (right).
-4. **Add `defaultSize` to `AppMeta`** — Extend `src/features/app-registry/index.ts` with `defaultSize: { width: number; height: number }` and wire it through `WindowChrome`.
-5. **Add `pinned` flag to `AppMeta`** — Distinguish taskbar-pinned apps from registered-only apps. Prevents taskbar overflow.
-6. **Implement the reel player** — `src/features/reels/index.tsx` is required before Projects App detail view can render.
+1. **Load Inter font** — ✅ Loaded in `src/app/layout.tsx` and mapped in `globals.css`.
+2. **Define all CSS custom property tokens** — ✅ Mapped in `src/app/globals.css`.
+3. **Fix window control button order** — ✅ Order matches Close → Minimize → Maximize in `WindowChrome`.
+4. **Add `defaultSize` to `AppMeta`** — ✅ Integrated in registry and wired to `WindowChrome`.
+5. **Add `pinned` flag to `AppMeta`** — ✅ Pinned status controls taskbar dock icons.
+6. **Implement the reel player** — ✅ Independent `ReelPlayer` implemented in `src/features/reels/index.tsx`.
 
 ---
 

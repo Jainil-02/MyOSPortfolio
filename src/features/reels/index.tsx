@@ -101,40 +101,40 @@ export default function ReelPlayer({
     }
   };
 
-  // Keyboard navigation
+  // Auto-focus container on mount to enable immediate keyboard navigation
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Only navigate if the user isn't typing in an input
-      const target = e.target as HTMLElement;
-      if (target?.tagName === "INPUT" || target?.tagName === "TEXTAREA") {
-        return;
-      }
+    if (containerRef.current) {
+      containerRef.current.focus();
+    }
+  }, []);
 
-      if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        handlePrev();
-      } else if (e.key === "ArrowRight") {
-        e.preventDefault();
-        handleNext();
-      } else if (e.key === "Escape" && onEscape) {
-        e.preventDefault();
-        onEscape();
-      } else if (e.key >= "1" && e.key <= "9") {
-        const num = parseInt(e.key, 10) - 1;
-        if (num < currentSlides.length) {
-          setSlideIndex(num);
-          if (onSlideChange && activeReel) {
-            onSlideChange(activeReel.id, num);
-          }
+  // Keyboard navigation handler scoped to the component
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    // Only navigate if the user isn't typing in an input
+    const target = e.target as HTMLElement;
+    if (target?.tagName === "INPUT" || target?.tagName === "TEXTAREA") {
+      return;
+    }
+
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      handlePrev();
+    } else if (e.key === "ArrowRight") {
+      e.preventDefault();
+      handleNext();
+    } else if (e.key === "Escape" && onEscape) {
+      e.preventDefault();
+      onEscape();
+    } else if (e.key >= "1" && e.key <= "9") {
+      const num = parseInt(e.key, 10) - 1;
+      if (num < currentSlides.length) {
+        setSlideIndex(num);
+        if (onSlideChange && activeReel) {
+          onSlideChange(activeReel.id, num);
         }
       }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [handlePrev, handleNext, currentSlides.length, onEscape, activeReel, onSlideChange]);
+    }
+  };
 
   if (!activeReel) {
     return (
@@ -149,7 +149,8 @@ export default function ReelPlayer({
   return (
     <div
       ref={containerRef}
-      tabIndex={0} // Makes keyboard listener scope focusable if clicked
+      tabIndex={0} // Makes keyboard listener scope focusable
+      onKeyDown={handleKeyDown}
       style={{
         display: "flex",
         flexDirection: "column",

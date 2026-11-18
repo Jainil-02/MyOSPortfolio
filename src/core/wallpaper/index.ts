@@ -12,7 +12,7 @@ export type WallpaperConfig = {
 
 const defaultWallpaper: WallpaperConfig = {
   type: "gradient",
-  value: "linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)",
+  value: "linear-gradient(135deg, #0d1b2a 0%, #0a3040 40%, #062030 100%)",
   variant: "dark",
 };
 

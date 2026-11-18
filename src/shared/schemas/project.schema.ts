@@ -66,6 +66,7 @@ export const projectSchema = z
     role: nonEmptyTextSchema,
     teamSize: z.number().int().positive(),
     features: z.array(nonEmptyTextSchema).default([]),
+    architectureHighlights: z.array(nonEmptyTextSchema).default([]),
     challenges: z.array(nonEmptyTextSchema).default([]),
     solutions: z.array(nonEmptyTextSchema).default([]),
     results: z.array(nonEmptyTextSchema).default([]),

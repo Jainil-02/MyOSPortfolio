@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 type BadgeVariant = "neutral" | "status" | "active" | "tech";
 
@@ -20,6 +20,7 @@ export default function AppTagBadge({
   onClick,
 }: AppTagBadgeProps) {
   const isClickable = !!onClick;
+  const [isHovered, setIsHovered] = useState(false);
 
   const getStatusConfig = () => {
     switch (statusType) {
@@ -63,9 +64,9 @@ export default function AppTagBadge({
     };
   } else if (variant === "active") {
     variantStyle = {
-      background: "rgba(16, 185, 129, 0.15)",
+      background: "color-mix(in srgb, var(--color-accent) 15%, transparent)",
       color: "var(--color-accent)",
-      border: "1px solid rgba(16, 185, 129, 0.3)",
+      border: "1px solid color-mix(in srgb, var(--color-accent) 30%, transparent)",
     };
   } else if (variant === "tech") {
     variantStyle = {
@@ -87,13 +88,41 @@ export default function AppTagBadge({
     };
   }
 
+  // Interactive Hover Styles
+  let hoverStyle: React.CSSProperties = {};
+  if (isClickable && isHovered) {
+    if (variant === "neutral") {
+      hoverStyle = {
+        background: "var(--color-surface-2)",
+        color: "var(--color-text-primary)",
+        borderColor: "rgba(255, 255, 255, 0.15)",
+        transform: "translateY(-1px)",
+      };
+    } else if (variant === "active") {
+      hoverStyle = {
+        background: "color-mix(in srgb, var(--color-accent) 25%, transparent)",
+        borderColor: "color-mix(in srgb, var(--color-accent) 50%, transparent)",
+        transform: "translateY(-1px)",
+      };
+    } else if (variant === "tech") {
+      hoverStyle = {
+        background: "rgba(255, 255, 255, 0.1)",
+        borderColor: "rgba(255, 255, 255, 0.12)",
+        transform: "translateY(-1px)",
+      };
+    }
+  }
+
   return (
     <span
       className={className}
       onClick={onClick}
+      onMouseEnter={() => isClickable && setIsHovered(true)}
+      onMouseLeave={() => isClickable && setIsHovered(false)}
       style={{
         ...baseStyle,
         ...variantStyle,
+        ...hoverStyle,
         ...style,
       }}
     >
