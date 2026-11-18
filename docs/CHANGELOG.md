@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Architecture Documentation Consolidation (2026-11-18)
+
+- **Created `docs/PROPOSED_ARCHITECTURE.md`**: Comprehensive architecture document synthesizing all architectural knowledge from PRODUCT_BLUEPRINT.md, DESIGN_SYSTEM.md, PHASE_3_ARCHITECTURE.md, PROJECT_STATUS.md, and DECISIONS.md. Serves as the authoritative reference for both the ApexOS platform and the Multi-Agent Engineering System, covering system overview, repository structure, core systems, layout patterns, implementation roadmap for Phase 4 & 5, and cross-reference index to all documentation.
+- **Created `docs/agent-system/PROPOSED_ARCHITECTURE.md`**: Architecture specification for the Multi-Agent Engineering System used to develop and maintain ApexOS. Documents the multi-agent hierarchy, agent communication protocol, automated workflows, AI Assistant app architecture, and implementation roadmap.
+
 ### Product Blueprint (2026-06-27)
 
 - **Created `docs/PRODUCT_BLUEPRINT.md`**: New highest-level product specification document. Answers "What should My OS Portfolio become when it is finished?" in full. Covers: Product Vision, Product Principles (P-1 through P-7), complete Recruiter Journey (Boot → Terminal), full Product Map with specs for all 11 apps (About, Projects, Skills, Resume, Contact, Settings, Files, Browser, Gallery, Achievements, Terminal + AI Assistant), Application Relationships diagram, Global UX (windows, animations, notifications, command palette, keyboard shortcuts, context menus, accessibility, error handling), Design Philosophy (Samsung DeX inspiration, glassmorphism discipline, dark-native UI), Content Strategy (projects, resume, certificates, images, downloads, case studies, future blog), all 11 Wow Moments with implementation status, complete Success Criteria checklist, and Phase 4/5 Future Vision.
