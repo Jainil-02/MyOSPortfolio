@@ -1,109 +1,65 @@
-# DEVELOPMENT ROADMAP
+# Development Roadmap
 
-## Purpose
+## Roadmap principles
 
-This roadmap defines the planned phases and milestones for the My OS Portfolio project.
+ApexOS should prioritize trustworthy portfolio content, reliable core behavior and release quality before adding more simulated features. Every milestone needs owner-approved scope, acceptance criteria and verification evidence.
 
----
+## Milestone 0 — Documentation and product truth
 
-## Phase 1: Foundation
+- Reconcile project status, task board and architecture documentation.
+- Confirm the product vision and approved design references.
+- Owner-approve the canonical personal/professional profile data.
+- Identify all sample/demo content and decide whether to remove, replace or label it.
 
-Goal: Establish architecture, validation, tooling, and documentation.
+**Exit criteria:** documentation agrees on the current baseline; portfolio facts are approved.
 
-Completed items:
+## Milestone 1 — Core reliability and browser boundary
 
-- Next.js App Router scaffold created (`src/app`).
-- ESLint, Prettier, TypeScript, and Vitest configured.
-- Zod schema validation for projects and reels defined.
-- Architecture documentation and boundary rules established.
-- Dynamic data accessors and project validation scripts.
-- Initial single-project sample database (`projects.json`).
+- Harden window manager invariants and public read APIs.
+- Validate persisted settings and notifications at runtime.
+- Secure Browser app message handling and review iframe sandbox/navigation policy.
+- Guard command palette behavior for empty results.
+- Review subscriptions, listeners, timers and browser API failure paths.
 
----
+**Exit criteria:** core behavior is covered by tests; untrusted browser content cannot issue unvalidated parent commands.
 
-## Phase 2: OS Runtime and Shells
+## Milestone 2 — Test and CI foundation
 
-Goal: Build the operating system runtime, shells, and system services.
+- Add unit tests for runtime, window manager, registry, settings and notifications.
+- Add tests for URL handling, message validation and command-palette navigation.
+- Confirm the package scripts and supported Node/package-manager versions.
+- Add or verify CI for formatting, lint, typecheck, tests, content validation and production build.
 
-Completed items:
+**Exit criteria:** required checks run consistently in local development and CI, with recorded results.
 
-- Core OS state manager (`src/core/os-runtime`) and boot/lock sequences.
-- Window management system (`src/core/window-manager`) with focus, minimize, and maximize behaviors.
-- Adaptive shell host (`src/shells`) with responsive desktop, tablet, and mobile shells.
-- Component-based window execution mapping and registry (`src/features/app-registry`).
-- Settings store (`src/core/settings`) for wallpaper configuration and lock screen gating.
-- Wallpaper system (`src/core/wallpaper`) bound to system settings.
-- Desktop icon grids, hover interactions, double-click launch, and context menu support.
-- Core notification queue, badge counts, tray popovers, and lock screen notifications.
-- System-wide command palette (`src/features/command-palette`) overlay with arrows and keyboard quick app launching.
+## Milestone 3 — Portfolio experience quality
 
----
+- Validate all app content against the approved profile source.
+- Review desktop, tablet and mobile behavior.
+- Improve keyboard accessibility, focus management and semantic controls.
+- Respect reduced-motion preferences.
+- Verify resume download, print, share and contact flows.
+- Clearly label simulated Files, Terminal, network and device information.
 
-## Phase 2.5: Design System Governance
+**Exit criteria:** recruiter-critical flows work, content is accurate, and core accessibility checks pass.
 
-Goal: Lock down visual aesthetics and establish multi-agent design rules.
+## Milestone 4 — Multi-agent workflow maturity
 
-Completed items:
+- Define task/spec/design/review templates.
+- Keep implementation and independent review roles separate.
+- Use isolated branches/worktrees for parallel work.
+- Require evidence-backed QA and human approval at defined gates.
+- Document retry, timeout, escalation and merge rules.
+- Evaluate external agent skills individually before adoption.
 
-- Analyzed approved design screenshots in `docs/design/`.
-- Created [DESIGN_SYSTEM.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/DESIGN_SYSTEM.md) as the visual source of truth for the entire repository.
-- Created [DESIGN_REVIEW.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/DESIGN_REVIEW.md) and [PRE_PHASE_3_AUDIT.md](file:///c:/Users/lenov/OneDrive/Desktop/Project-X/my-os-portfolio/docs/PRE_PHASE_3_AUDIT.md) to log design gaps.
-- Updated agent rules with mandatory layout, token, typography, and button conventions.
+**Exit criteria:** workflow is reproducible and does not rely on assumed autonomous orchestration.
 
----
+## Milestone 5 — Future vision
 
-## Phase 3: App Ecosystem ✅ Complete
+Only after release readiness, evaluate future AI integration and other Phase 5 concepts. Keep user-facing AI capabilities isolated from development credentials and internal engineering tools.
 
-Goal: Scaffold reusable UI structures and implement 10 portfolio applications.
+## Deferred decisions
 
-**Completed Infrastructure Items (Phase 3 Prerequisites):**
-
-- ✅ Load **Inter** font globally and declare all custom CSS tokens in `src/app/globals.css`.
-- ✅ Fix macOS control button ordering (Close → Minimize → Maximize) in `WindowChrome`.
-- ✅ Extend `AppMeta` in registry with `defaultSize` and `pinned` values.
-- ✅ Build reusable Layout B primitives (`AppSidebar`, `AppContentArea`, `AppTagBadge`) under `src/shared/ui/`.
-- ✅ Implement portable `ReelPlayer` (`src/features/reels/index.tsx`).
-
-**Completed Applications:**
-
-| App | Description | Status |
-|-----|-------------|--------|
-| **Projects** | Sidebar project selection + full detail tabs + reel viewer (v1 & v2 compatible) | ✅ Complete |
-| **About** | Profile card, tags, CTAs, and dynamic current project focus card | ✅ Complete |
-| **Resume** | Styled OS document viewer reading static resume data | ✅ Complete |
-| **Contact** | OS-styled form fields with client validation and static submission API integration | ✅ Complete |
-| **Skills** | Sidebar categories + skill card grid with level badges (no progress bars) | ✅ Complete |
-| **Files** | High-fidelity file explorer matching `file-app.png` layout, breadcrumbs, status bar | ✅ Complete |
-| **Browser** | OS-style address bar + iframe/page renderer for external URL compatibility | ✅ Complete |
-| **Gallery** | Photo/thumbnail flex-grid media viewer with lightbox | ✅ Complete |
-| **Terminal** | Simulated monospace prompt supporting `whoami`, `neofetch`, and application launch commands | ✅ Complete |
-| **Achievements** | Grid of trophy/contribution notification-style cards with category filtering | ✅ Complete |
-
-**All 10 portfolio applications implemented, registered, and integrated into the OS runtime.**
-
----
-
-## Phase 4: Polish and AI Integration
-
-Goal: Refine UX, add transitions, and prepare for AI-driven capabilities.
-
-Planned items:
-
-- Add window open/close/minimize transitions and animations.
-- Implement app drag-to-resize handles on window edges.
-- Add taskbar pinned vs. running icon distinction.
-- Add persistent settings state and custom wallpaper uploads.
-- Add AI assistant widgets or prompt integration.
-
----
-
-## Phase 5: Future Vision
-
-Goal: Expand the portfolio into a fully interactive OS with AI-managed content.
-
-Future ideas:
-
-- Project timeline storytelling.
-- Right-click desktop contexts and settings extensions.
-- Adaptive multi-window snap layouts.
-- Dynamic session handoff logs and AI-managed file structures.
+- Whether to lazy-load app components should be decided from bundle/performance measurements.
+- Whether Contact needs a real backend depends on the intended public product behavior.
+- Any new core service or app should have a written requirement and acceptance criteria before implementation.
